@@ -134,17 +134,14 @@ export function CommunityPostForm({ onSubmit, onClose }: CommunityPostFormProps)
               <label className="block text-lg font-bold text-pink-600 mb-3">
                 📍 위치
               </label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-pink-400" />
-                <Input
-                  type="text"
-                  placeholder="위치를 입력하세요 (예: 강남역 3번 출구, 홍대입구역 근처)"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="input-cute h-12 text-base pl-12"
-                  required
-                />
-              </div>
+              <Input
+                type="text"
+                placeholder="위치를 입력하세요 (예: 강남역 3번 출구, 홍대입구역 근처)"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="input-cute h-12 text-base"
+                required
+              />
             </div>
 
             {/* 내용 */}
