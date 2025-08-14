@@ -751,18 +751,22 @@ export default function App() {
     try {
       const response = await apiClient.login({ userId, password });
       if (response.success) {
-        setCurrentUser(response.data.user);
+        const newUser = response.data.user;
+        setCurrentUser(newUser);
         // 토큰을 localStorage에 저장 (실제 프로덕션에서는 더 안전한 방법 사용)
         localStorage.setItem('authToken', response.data.token);
         setShowAuthModal(false);
-        alert(`환영합니다, ${response.data.user.displayName}님! 🐱💕`);
         
         // 로그인 후 저장된 동작이 있으면 실행
         if (pendingAction) {
+          // currentUser 상태 업데이트를 기다리지 않고 즉시 실행
           setTimeout(() => {
             pendingAction();
             setPendingAction(null);
-          }, 100); // 짧은 딜레이로 alert가 표시된 후 실행
+          }, 50); // 모달이 닫힌 후 바로 실행
+        } else {
+          // 저장된 동작이 없으면 환영 메시지 표시
+          alert(`환영합니다, ${newUser.displayName}님! 🐱💕`);
         }
       } else {
         throw new Error(response.message);
@@ -780,14 +784,14 @@ export default function App() {
         // 토큰을 localStorage에 저장
         localStorage.setItem('authToken', response.data.token);
         setShowAuthModal(false);
-        alert(`가입을 환영합니다, ${response.data.user.displayName}님! 🎉🐱`);
         
-        // 회원가입 후 저장된 동작이 있으면 실행
         if (pendingAction) {
           setTimeout(() => {
             pendingAction();
             setPendingAction(null);
-          }, 100); // 짧은 딜레이로 alert가 표시된 후 실행
+          }, 50);
+        } else {
+          alert(`가입을 환영합니다, ${response.data.user.displayName}님! 🎉🐱`);
         }
       } else {
         throw new Error(response.message);

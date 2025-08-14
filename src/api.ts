@@ -1,5 +1,7 @@
 // 백엔드 API 클라이언트
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? 'https://meowtown-back-production.up.railway.app/api'
+  : 'http://localhost:8080/api';
 
 export interface Cat {
   id: string;
@@ -144,25 +146,65 @@ class ApiClient {
     if (params?.size !== undefined) searchParams.append('size', params.size.toString());
     
     const endpoint = `/cats${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-    return this.request<Cat[]>(endpoint);
+    const response = await this.request<any[]>(endpoint);
+    
+    // imageBase64를 image로 변환
+    if (response.success && response.data) {
+      response.data = response.data.map((cat: any) => ({
+        ...cat,
+        image: cat.imageBase64 || cat.image
+      }));
+    }
+    
+    return response as ApiResponse<Cat[]>;
   }
 
   // 고양이 등록
   async createCat(catData: CatRegistrationForm): Promise<ApiResponse<Cat>> {
-    return this.request<Cat>('/cats', {
+    const response = await this.request<any>('/cats', {
       method: 'POST',
       body: JSON.stringify(catData),
     });
+    
+    // imageBase64를 image로 변환
+    if (response.success && response.data) {
+      response.data = {
+        ...response.data,
+        image: response.data.imageBase64 || response.data.image
+      };
+    }
+    
+    return response as ApiResponse<Cat>;
   }
 
   // 고양이 검색
   async searchCats(query: string): Promise<ApiResponse<Cat[]>> {
-    return this.request<Cat[]>(`/cats/search?query=${encodeURIComponent(query)}`);
+    const response = await this.request<any[]>(`/cats/search?query=${encodeURIComponent(query)}`);
+    
+    // imageBase64를 image로 변환
+    if (response.success && response.data) {
+      response.data = response.data.map((cat: any) => ({
+        ...cat,
+        image: cat.imageBase64 || cat.image
+      }));
+    }
+    
+    return response as ApiResponse<Cat[]>;
   }
   
   // 고양이 이름 검색 (단순화된 버전)
   async searchCatsByName(name: string): Promise<ApiResponse<Cat[]>> {
-    return this.request<Cat[]>(`/cats?name=${encodeURIComponent(name)}&size=50`);
+    const response = await this.request<any[]>(`/cats?name=${encodeURIComponent(name)}&size=50`);
+    
+    // imageBase64를 image로 변환
+    if (response.success && response.data) {
+      response.data = response.data.map((cat: any) => ({
+        ...cat,
+        image: cat.imageBase64 || cat.image
+      }));
+    }
+    
+    return response as ApiResponse<Cat[]>;
   }
 
   // 주변 고양이 검색
@@ -172,7 +214,17 @@ class ApiClient {
       lng: params.lng.toString(),
       radius: params.radius.toString(),
     });
-    return this.request<Cat[]>(`/cats/nearby?${searchParams.toString()}`);
+    const response = await this.request<any[]>(`/cats/nearby?${searchParams.toString()}`);
+    
+    // imageBase64를 image로 변환
+    if (response.success && response.data) {
+      response.data = response.data.map((cat: any) => ({
+        ...cat,
+        image: cat.imageBase64 || cat.image
+      }));
+    }
+    
+    return response as ApiResponse<Cat[]>;
   }
 
   // 고양이 좋아요 토글
