@@ -14,11 +14,12 @@ export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElemen
 
   return didError ? (
     <div
-      className={`inline-block bg-gray-100 text-center align-middle ${className ?? ''}`}
+      className={`inline-block bg-gradient-to-br from-pink-100 to-purple-100 text-center align-middle ${className ?? ''}`}
       style={style}
     >
-      <div className="flex items-center justify-center w-full h-full">
-        <img src={ERROR_IMG_SRC} alt="Error loading image" {...rest} data-original-url={src} />
+      <div className="flex flex-col items-center justify-center w-full h-full text-pink-400">
+        <div className="text-6xl mb-2">🐱</div>
+        <div className="text-sm font-medium">이미지를 불러올 수 없어요</div>
       </div>
     </div>
   ) : (
