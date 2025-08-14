@@ -1,7 +1,5 @@
 // 백엔드 API 클라이언트
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://meowtown-back-production.up.railway.app/api'
-  : 'http://localhost:8080/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
 export interface Cat {
   id: string;
