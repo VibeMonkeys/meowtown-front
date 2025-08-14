@@ -1,14 +1,36 @@
-// 백엔드 API 클라이언트
-const API_BASE_URL = process.env.REACT_APP_API_URL || 
-  (process.env.NODE_ENV === 'production' || window.location.hostname !== 'localhost'
-    ? 'https://meowtown-back-production.up.railway.app/api'
-    : 'http://localhost:8080/api');
+// 🔍 환경변수 완전 디버깅
+console.log('========== 🐱 MEOWTOWN 환경변수 디버깅 ==========');
+console.log('🔸 process.env.NODE_ENV:', process.env.NODE_ENV);
+console.log('🔸 process.env.REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+console.log('🔸 window.location.hostname:', window.location.hostname);
+console.log('🔸 window.location.href:', window.location.href);
+console.log('🔸 All process.env keys:', Object.keys(process.env).filter(key => key.startsWith('REACT_APP')));
 
-// 디버깅용 로그
-console.log('🐱 Environment:', process.env.NODE_ENV);
-console.log('🐱 REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
-console.log('🐱 Hostname:', window.location.hostname);
-console.log('🐱 Final API_BASE_URL:', API_BASE_URL);
+// 환경 판단 로직
+const isProduction = process.env.NODE_ENV === 'production';
+const isVercelDomain = window.location.hostname.includes('vercel.app');
+const isLocalhost = window.location.hostname === 'localhost';
+
+console.log('🔸 isProduction:', isProduction);
+console.log('🔸 isVercelDomain:', isVercelDomain);
+console.log('🔸 isLocalhost:', isLocalhost);
+
+// API URL 결정
+let API_BASE_URL;
+
+if (process.env.REACT_APP_API_URL) {
+  API_BASE_URL = process.env.REACT_APP_API_URL;
+  console.log('✅ 환경변수 사용:', API_BASE_URL);
+} else if (isVercelDomain || isProduction) {
+  API_BASE_URL = 'https://meowtown-back-production.up.railway.app/api';
+  console.log('✅ 프로덕션 URL 사용:', API_BASE_URL);
+} else {
+  API_BASE_URL = 'http://localhost:8080/api';
+  console.log('✅ 개발 URL 사용:', API_BASE_URL);
+}
+
+console.log('🎯 최종 API_BASE_URL:', API_BASE_URL);
+console.log('=============================================');
 
 export interface Cat {
   id: string;
@@ -94,9 +116,11 @@ export interface CommunityComment {
 class ApiClient {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
     try {
-      console.log(`API 요청: ${options?.method || 'GET'} ${API_BASE_URL}${endpoint}`);
+      const fullUrl = `${API_BASE_URL}${endpoint}`;
+      console.log(`🚀 API 요청: ${options?.method || 'GET'} ${fullUrl}`);
+      console.log('🚀 사용된 API_BASE_URL:', API_BASE_URL);
       if (options?.body) {
-        console.log('요청 바디:', options.body);
+        console.log('🚀 요청 바디:', options.body);
       }
       
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
