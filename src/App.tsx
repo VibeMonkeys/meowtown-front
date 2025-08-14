@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Header } from './components/Header';
 import { CatCard } from './components/CatCard';
 import { StatsSection } from './components/StatsSection';
@@ -96,6 +97,15 @@ interface SightingRecord {
 }
 
 export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const { user: currentUser, isLoading: authLoading } = useAuth();
   const [currentView, setCurrentView] = useState('home');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showPostForm, setShowPostForm] = useState(false);
@@ -115,7 +125,6 @@ export default function App() {
   const [postComments, setPostComments] = useState<Record<string, CommunityComment[]>>({});
   const [expandedPosts, setExpandedPosts] = useState<Set<string>>(new Set());
   const [communityLoading, setCommunityLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [sightingRecords, setSightingRecords] = useState<SightingRecord[]>([]);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
   
@@ -746,30 +755,26 @@ export default function App() {
     }
   };
 
-  // 인증 관련 핸들러
+  // 인증 관련 핸들러 - AuthContext로 이동
+  const { login, register, logout } = useAuth();
+
   const handleLogin = async (userId: string, password: string) => {
     try {
-      const response = await apiClient.login({ userId, password });
-      if (response.success) {
-        const newUser = response.data.user;
-        setCurrentUser(newUser);
-        // 토큰을 localStorage에 저장 (실제 프로덕션에서는 더 안전한 방법 사용)
-        localStorage.setItem('authToken', response.data.token);
+      const success = await login({ userId, password });
+      if (success) {
         setShowAuthModal(false);
         
         // 로그인 후 저장된 동작이 있으면 실행
         if (pendingAction) {
-          // currentUser 상태 업데이트를 기다리지 않고 즉시 실행
           setTimeout(() => {
             pendingAction();
             setPendingAction(null);
-          }, 50); // 모달이 닫힌 후 바로 실행
+          }, 50);
         } else {
-          // 저장된 동작이 없으면 환영 메시지 표시
-          alert(`환영합니다, ${newUser.displayName}님! 🐱💕`);
+          alert(`환영합니다! 🐱💕`);
         }
       } else {
-        throw new Error(response.message);
+        throw new Error('로그인에 실패했습니다.');
       }
     } catch (error: any) {
       throw new Error(error.message || '로그인에 실패했습니다.');
@@ -778,11 +783,8 @@ export default function App() {
 
   const handleRegister = async (userId: string, password: string, email: string, displayName: string) => {
     try {
-      const response = await apiClient.register({ userId, password, email, displayName });
-      if (response.success) {
-        setCurrentUser(response.data.user);
-        // 토큰을 localStorage에 저장
-        localStorage.setItem('authToken', response.data.token);
+      const success = await register({ userId, password, email, displayName });
+      if (success) {
         setShowAuthModal(false);
         
         if (pendingAction) {
@@ -791,10 +793,10 @@ export default function App() {
             setPendingAction(null);
           }, 50);
         } else {
-          alert(`가입을 환영합니다, ${response.data.user.displayName}님! 🎉🐱`);
+          alert(`가입을 환영합니다! 🎉🐱`);
         }
       } else {
-        throw new Error(response.message);
+        throw new Error('회원가입에 실패했습니다.');
       }
     } catch (error: any) {
       throw new Error(error.message || '회원가입에 실패했습니다.');
@@ -803,14 +805,10 @@ export default function App() {
 
   const handleLogout = async () => {
     try {
-      await apiClient.logout();
-      setCurrentUser(null);
-      localStorage.removeItem('authToken');
+      logout();
       alert('로그아웃되었습니다. 다음에 또 만나요! 👋🐱');
     } catch (error) {
-      // 로그아웃은 실패해도 클라이언트에서 처리
-      setCurrentUser(null);
-      localStorage.removeItem('authToken');
+      console.error('로그아웃 에러:', error);
     }
   };
 
@@ -1391,6 +1389,18 @@ export default function App() {
         );
     }
   };
+
+  // 인증 로딩 중에는 로딩 화면 표시
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-bounce">🐱</div>
+          <p className="text-xl text-pink-500">로그인 상태를 확인하는 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
