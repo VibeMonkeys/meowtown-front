@@ -108,6 +108,18 @@ export interface CommunityComment {
 }
 
 class ApiClient {
+  private getAuthToken(): string | null {
+    return localStorage.getItem('authToken');
+  }
+
+  private setAuthToken(token: string): void {
+    localStorage.setItem('authToken', token);
+  }
+
+  private removeAuthToken(): void {
+    localStorage.removeItem('authToken');
+  }
+
   private async request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
     try {
       console.log(`API 요청: ${options?.method || 'GET'} ${API_BASE_URL}${endpoint}`);
@@ -115,11 +127,19 @@ class ApiClient {
         console.log('요청 바디:', options.body);
       }
       
+      const token = this.getAuthToken();
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+        ...options?.headers,
+      };
+      
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+        console.log('JWT 토큰 헤더 추가됨');
+      }
+      
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options?.headers,
-        },
+        headers,
         ...options,
       });
 
@@ -264,10 +284,18 @@ class ApiClient {
     email: string;
     displayName: string;
   }): Promise<ApiResponse<LoginResponse>> {
-    return this.request<LoginResponse>('/auth/register', {
+    const response = await this.request<LoginResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
+    
+    // 회원가입 성공 시 토큰 저장
+    if (response.success && response.data.token) {
+      this.setAuthToken(response.data.token);
+      console.log('회원가입 성공: 토큰 저장됨');
+    }
+    
+    return response;
   }
 
   // 로그인
@@ -275,17 +303,31 @@ class ApiClient {
     userId: string;
     password: string;
   }): Promise<ApiResponse<LoginResponse>> {
-    return this.request<LoginResponse>('/auth/login', {
+    const response = await this.request<LoginResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
+    
+    // 로그인 성공 시 토큰 저장
+    if (response.success && response.data.token) {
+      this.setAuthToken(response.data.token);
+      console.log('로그인 성공: 토큰 저장됨');
+    }
+    
+    return response;
   }
 
   // 로그아웃
   async logout(): Promise<ApiResponse<void>> {
-    return this.request<void>('/auth/logout', {
+    const response = await this.request<void>('/auth/logout', {
       method: 'POST',
     });
+    
+    // 로그아웃 시 토큰 삭제
+    this.removeAuthToken();
+    console.log('로그아웃: 토큰 삭제됨');
+    
+    return response;
   }
 
   // 인증 상태 확인
