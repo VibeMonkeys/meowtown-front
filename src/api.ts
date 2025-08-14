@@ -1,12 +1,13 @@
 // 백엔드 API 클라이언트
 const API_BASE_URL = process.env.REACT_APP_API_URL || 
-  (process.env.NODE_ENV === 'production' 
+  (process.env.NODE_ENV === 'production' || window.location.hostname !== 'localhost'
     ? 'https://meowtown-back-production.up.railway.app/api'
     : 'http://localhost:8080/api');
 
 // 디버깅용 로그
 console.log('🐱 Environment:', process.env.NODE_ENV);
 console.log('🐱 REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+console.log('🐱 Hostname:', window.location.hostname);
 console.log('🐱 Final API_BASE_URL:', API_BASE_URL);
 
 export interface Cat {
