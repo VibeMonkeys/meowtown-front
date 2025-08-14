@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
+import { CuteAlert, useCuteAlert } from './ui/CuteAlert';
 import { 
   X, 
   Plus, 
@@ -24,6 +25,7 @@ interface CommunityPostFormProps {
 }
 
 export function CommunityPostForm({ onSubmit, onClose }: CommunityPostFormProps) {
+  const { alertProps, showWarning } = useCuteAlert();
   const [type, setType] = useState<'sighting' | 'help' | 'update'>('sighting');
   const [content, setContent] = useState('');
   const [catName, setCatName] = useState('');
@@ -32,7 +34,7 @@ export function CommunityPostForm({ onSubmit, onClose }: CommunityPostFormProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim() || !catName.trim() || !location.trim()) {
-      alert('모든 필드를 입력해주세요!');
+      showWarning('모든 필드를 입력해주세요!', '입력 확인 🙀');
       return;
     }
     
@@ -196,6 +198,9 @@ export function CommunityPostForm({ onSubmit, onClose }: CommunityPostFormProps)
           </form>
         </CardContent>
       </Card>
+
+      {/* Cute Alert */}
+      <CuteAlert {...alertProps} />
     </div>
   );
 }

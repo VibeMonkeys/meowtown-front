@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { CuteAlert, useCuteAlert } from './components/ui/CuteAlert';
 import { Header } from './components/Header';
 import { CatCard } from './components/CatCard';
 import { StatsSection } from './components/StatsSection';
@@ -109,6 +110,7 @@ export default function App() {
 
 function AppContent() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
+  const { alertProps, showSuccess, showError, showInfo } = useCuteAlert();
   const [currentView, setCurrentView] = useState('home');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showPostForm, setShowPostForm] = useState(false);
@@ -342,10 +344,10 @@ function AppContent() {
         // 목록 새로고침
         await loadCats();
         
-        alert('고양이가 성공적으로 등록되었습니다!');
+        showSuccess('고양이가 성공적으로 등록되었습니다!', '등록 완료 🎉', 4000);
       } else {
         console.error('고양이 등록 실패 응답:', response);
-        alert(`고양이 등록에 실패했습니다: ${response.message || '알 수 없는 오류'}`);
+        showError(`고양이 등록에 실패했습니다: ${response.message || '알 수 없는 오류'}`, '등록 실패 😿');
       }
     } catch (error: any) {
       console.error('고양이 등록 에러 상세:', error);
@@ -360,7 +362,7 @@ function AppContent() {
         errorMessage += `\n\n서버 응답: ${JSON.stringify(error.response)}`;
       }
       
-      alert(errorMessage);
+      showError('네트워크 오류가 발생했습니다. 잠시 후 다시 시도해주세요.', '연결 오류 🙀');
     }
   };
 
@@ -459,7 +461,7 @@ function AppContent() {
     };
     setNotifications(prev => [newNotification, ...prev]);
     
-    alert('댓글이 등록되었습니다.');
+    showSuccess('댓글이 등록되었습니다!', '댓글 작성 완료 😸', 3000);
     console.log('댓글:', catId, commentContent);
   };
 
@@ -488,7 +490,7 @@ function AppContent() {
     
     if (navigator.clipboard) {
       navigator.clipboard.writeText(shareText).then(() => {
-        alert('공유 링크가 클립보드에 복사되었습니다!');
+        showSuccess('공유 링크가 클립보드에 복사되었습니다!', '클립보드 복사 완료 📋', 3000);
       }).catch(() => {
         prompt('아래 텍스트를 복사해서 공유해주세요:', shareText);
       });
@@ -522,7 +524,7 @@ function AppContent() {
       }
     } catch (error) {
       console.error('좋아요 에러:', error);
-      alert('좋아요 처리 중 오류가 발생했습니다.');
+      showError('좋아요 처리 중 오류가 발생했습니다.', '처리 실패 😿');
     }
   };
 
@@ -579,7 +581,7 @@ function AppContent() {
       }
     } catch (error) {
       console.error('댓글 작성 에러:', error);
-      alert('댓글 작성 중 오류가 발생했습니다.');
+      showError('댓글 작성 중 오류가 발생했습니다.', '작성 실패 😿');
     }
   };
 
@@ -629,7 +631,7 @@ function AppContent() {
       }
     } catch (error) {
       console.error('대댓글 등록 에러:', error);
-      alert('대댓글 등록 중 오류가 발생했습니다.');
+      showError('대댓글 등록 중 오류가 발생했습니다.', '등록 실패 😿');
     }
   };
 
@@ -697,12 +699,12 @@ function AppContent() {
         setShowPostForm(false);
         
         // 성공 알림
-        alert('게시글이 성공적으로 작성되었습니다! 🎉');
+        showSuccess('게시글이 성공적으로 작성되었습니다!', '작성 완료 🎉', 4000);
         console.log('게시글 작성 성공:', response.data);
       }
     } catch (error) {
       console.error('게시글 작성 에러:', error);
-      alert('게시글 작성 중 오류가 발생했습니다.');
+      showError('게시글 작성 중 오류가 발생했습니다.', '작성 실패 😿');
     }
   };
 
@@ -774,7 +776,7 @@ function AppContent() {
             setPendingAction(null);
           }, 50);
         } else {
-          alert(`환영합니다! 🐱💕`);
+          showSuccess(`환영합니다! 로그인이 완료되었습니다.`, '로그인 성공 🐱💕', 3000);
         }
       } else {
         throw new Error('로그인에 실패했습니다.');
@@ -796,7 +798,7 @@ function AppContent() {
             setPendingAction(null);
           }, 50);
         } else {
-          alert(`가입을 환영합니다! 🎉🐱`);
+          showSuccess(`가입을 환영합니다! 이제 냥이들과 함께해요.`, '회원가입 완료 🎉🐱', 4000);
         }
       } else {
         throw new Error('회원가입에 실패했습니다.');
@@ -809,7 +811,7 @@ function AppContent() {
   const handleLogout = async () => {
     try {
       logout();
-      alert('로그아웃되었습니다. 다음에 또 만나요! 👋🐱');
+      showInfo('로그아웃되었습니다. 다음에 또 만나요!', '안녕히 가세요 👋🐱', 3000);
     } catch (error) {
       console.error('로그아웃 에러:', error);
     }
@@ -1483,6 +1485,9 @@ function AppContent() {
         onLogin={handleLogin}
         onRegister={handleRegister}
       />
+
+      {/* Cute Alert */}
+      <CuteAlert {...alertProps} />
     </div>
   );
 }

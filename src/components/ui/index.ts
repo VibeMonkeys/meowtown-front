@@ -1,6 +1,7 @@
 // Standardized Cute Design System Components
 export * from './CuteButton';
 export * from './CuteCard';
+export * from './CuteAlert';
 
 // Re-export existing UI components
 export * from './button';
