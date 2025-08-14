@@ -135,7 +135,10 @@ class ApiClient {
       
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('JWT 토큰 헤더 추가됨');
+        console.log('🔑 JWT 토큰 헤더 추가됨:', token.substring(0, 20) + '...');
+      } else {
+        console.warn('⚠️ JWT 토큰이 없습니다 - localStorage 확인 필요');
+        console.log('localStorage authToken:', localStorage.getItem('authToken'));
       }
       
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -204,6 +207,9 @@ class ApiClient {
 
   // 고양이 등록
   async createCat(catData: CatRegistrationForm): Promise<ApiResponse<Cat>> {
+    console.log('🐱 고양이 등록 시작...');
+    console.log('현재 저장된 토큰:', this.getAuthToken()?.substring(0, 20) + '...');
+    
     const response = await this.request<any>('/cats', {
       method: 'POST',
       body: JSON.stringify(catData),
@@ -292,7 +298,12 @@ class ApiClient {
     // 회원가입 성공 시 토큰 저장
     if (response.success && response.data.token) {
       this.setAuthToken(response.data.token);
-      console.log('회원가입 성공: 토큰 저장됨');
+      console.log('✅ 회원가입 성공: 토큰 저장됨');
+      console.log('저장된 토큰:', response.data.token.substring(0, 20) + '...');
+      console.log('localStorage 확인:', localStorage.getItem('authToken'));
+    } else {
+      console.error('❌ 회원가입 실패 - 토큰이 응답에 없습니다');
+      console.log('응답 구조:', response);
     }
     
     return response;
@@ -311,7 +322,12 @@ class ApiClient {
     // 로그인 성공 시 토큰 저장
     if (response.success && response.data.token) {
       this.setAuthToken(response.data.token);
-      console.log('로그인 성공: 토큰 저장됨');
+      console.log('✅ 로그인 성공: 토큰 저장됨');
+      console.log('저장된 토큰:', response.data.token.substring(0, 20) + '...');
+      console.log('localStorage 확인:', localStorage.getItem('authToken'));
+    } else {
+      console.error('❌ 로그인 실패 - 토큰이 응답에 없습니다');
+      console.log('응답 구조:', response);
     }
     
     return response;
