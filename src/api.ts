@@ -128,9 +128,9 @@ class ApiClient {
       }
       
       const token = this.getAuthToken();
-      const headers: HeadersInit = {
+      const headers: Record<string, string> = {
         'Content-Type': 'application/json',
-        ...options?.headers,
+        ...(options?.headers as Record<string, string> || {}),
       };
       
       if (token) {
@@ -153,6 +153,15 @@ class ApiClient {
         try {
           errorData = await response.json();
           console.error('에러 응답 JSON:', errorData);
+          console.error('에러 응답 구조 분석:', {
+            hasError: !!errorData?.error,
+            errorType: typeof errorData?.error,
+            hasDetails: !!errorData?.error?.details,
+            detailsType: typeof errorData?.error?.details,
+            isDetailsArray: Array.isArray(errorData?.error?.details),
+            hasMessage: !!errorData?.message,
+            hasErrorMessage: !!errorData?.error?.message
+          });
         } catch {
           const errorText = await response.text();
           console.error('에러 응답 텍스트:', errorText);
@@ -160,11 +169,13 @@ class ApiClient {
         }
         
         // 백엔드의 에러 응답 형식에 맞춰 처리
-        if (errorData?.error?.details) {
+        if (errorData?.error?.details && Array.isArray(errorData.error.details)) {
           const errorMessages = errorData.error.details.map((d: any) => d.message).join('\n');
           throw new Error(`유효성 검사 오류:\n${errorMessages}`);
         } else if (errorData?.error?.message) {
           throw new Error(errorData.error.message);
+        } else if (errorData?.message) {
+          throw new Error(errorData.message);
         } else {
           throw new Error(`서버 오류 (${response.status}): ${JSON.stringify(errorData)}`);
         }
