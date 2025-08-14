@@ -196,7 +196,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="예: 치즈, 나비, 검둥이 💝"
-                  className="input-cute"
+                  className="input-cute text-mobile-optimized min-h-[44px]"
                   required
                 />
               </div>
@@ -210,7 +210,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
                   value={formData.estimatedAge}
                   onChange={(e) => setFormData(prev => ({ ...prev, estimatedAge: e.target.value }))}
                   placeholder="예: 2살, 어린고양이, 성체 🐱"
-                  className="input-cute"
+                  className="input-cute text-mobile-optimized min-h-[44px]"
                 />
               </div>
             </div>
@@ -227,19 +227,19 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
                 }
                 className="flex gap-4"
               >
-                <div className="flex items-center space-x-3 bg-blue-50 p-3 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-colors cursor-pointer">
+                <div className="flex items-center space-x-3 bg-blue-50 p-4 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-colors cursor-pointer min-h-[44px]">
                   <RadioGroupItem value="male" id="male" className="text-blue-500" />
                   <Label htmlFor="male" className="text-blue-600 font-medium cursor-pointer flex items-center gap-1">
                     ♂️ 수컷
                   </Label>
                 </div>
-                <div className="flex items-center space-x-3 bg-pink-50 p-3 rounded-xl border-2 border-pink-200 hover:border-pink-300 transition-colors cursor-pointer">
+                <div className="flex items-center space-x-3 bg-pink-50 p-4 rounded-xl border-2 border-pink-200 hover:border-pink-300 transition-colors cursor-pointer min-h-[44px]">
                   <RadioGroupItem value="female" id="female" className="text-pink-500" />
                   <Label htmlFor="female" className="text-pink-600 font-medium cursor-pointer flex items-center gap-1">
                     ♀️ 암컷
                   </Label>
                 </div>
-                <div className="flex items-center space-x-3 bg-gray-50 p-3 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-colors cursor-pointer">
+                <div className="flex items-center space-x-3 bg-gray-50 p-4 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-colors cursor-pointer min-h-[44px]">
                   <RadioGroupItem value="unknown" id="unknown" className="text-gray-500" />
                   <Label htmlFor="unknown" className="text-gray-600 font-medium cursor-pointer flex items-center gap-1">
                     ❓ 성별 미상

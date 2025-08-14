@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardFooter } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -53,18 +53,20 @@ export function CatCard({ cat, onLike, onComment, onShare, onClick }: CatCardPro
     onShare?.(cat.id);
   };
 
-  const getGenderColor = (gender: string) => {
-    switch (gender) {
-      case 'male': return 'bg-blue-100 text-blue-800';
-      case 'female': return 'bg-pink-100 text-pink-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   return (
     <Card 
-      className="card-cute overflow-hidden cursor-pointer group relative"
+      className="card-cute overflow-hidden cursor-pointer group relative focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
       onClick={() => onClick?.(cat.id)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.(cat.id);
+        }
+      }}
+      tabIndex={0}
+      role="button"
+      aria-label={`${cat.name} 상세 정보 보기. ${cat.location}에서 목격된 ${cat.gender === 'male' ? '수컷' : cat.gender === 'female' ? '암컷' : '성별 미상'} 고양이${cat.isNeutered ? ', 중성화 완료' : ''}`}
     >
       {/* Sparkle Effect */}
       <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-all duration-500">
@@ -95,20 +97,22 @@ export function CatCard({ cat, onLike, onComment, onShare, onClick }: CatCardPro
         {/* Badges */}
         <div className="absolute top-3 right-3 flex flex-col gap-2">
           {cat.isNeutered && (
-            <Badge className="badge-cute badge-neutered shadow-lg">
-              <span className="mr-1">✂️</span>
+            <Badge className="badge-cute badge-neutered shadow-lg text-xs font-semibold px-3 py-1.5">
+              <span className="mr-1.5">✂️</span>
               중성화 완료
             </Badge>
           )}
-          <Badge className={`badge-cute shadow-lg ${
+          <Badge className={`badge-cute shadow-lg text-sm font-bold px-3 py-2 ${
             cat.gender === 'male' ? 'badge-gender-male' : 
             cat.gender === 'female' ? 'badge-gender-female' : 
             'badge-gender-unknown'
           }`}>
-            <span className="mr-1">
+            <span className="mr-2 text-base">
               {cat.gender === 'male' ? '♂️' : cat.gender === 'female' ? '♀️' : '❓'}
             </span>
-            {cat.gender === 'male' ? '수컷' : cat.gender === 'female' ? '암컷' : '성별미상'}
+            <span className="font-bold">
+              {cat.gender === 'male' ? '수컷' : cat.gender === 'female' ? '암컷' : '성별미상'}
+            </span>
           </Badge>
         </div>
 
@@ -173,26 +177,28 @@ export function CatCard({ cat, onLike, onComment, onShare, onClick }: CatCardPro
             variant="ghost" 
             size="sm"
             onClick={handleLike}
-            className={`btn-cute transition-all duration-300 hover:scale-110 gap-2 px-4 py-2 ${
+            className={`btn-cute transition-all duration-300 hover:scale-110 gap-2.5 px-5 py-2.5 min-h-[44px] text-sm font-bold ${
               isLiked 
                 ? 'bg-gradient-to-r from-red-400 to-pink-500 text-white shadow-lg heart-liked' 
-                : 'bg-white/80 hover:bg-red-50 text-gray-600 hover:text-red-500 border border-red-200'
+                : 'bg-white hover:bg-red-50 text-gray-700 hover:text-red-600 border-2 border-red-200 hover:border-red-300'
             }`}
+            aria-label={isLiked ? `${cat.name} 좋아요 취소 (현재 ${cat.likes}개)` : `${cat.name} 좋아요 (현재 ${cat.likes}개)`}
           >
-            <Heart className={`w-4 h-4 ${isLiked ? 'fill-current' : ''}`} />
-            <span className="font-medium">{cat.likes}</span>
-            {isLiked && <span className="ml-1">💕</span>}
+            <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} aria-hidden="true" />
+            <span className="font-bold text-base">{cat.likes}</span>
+            {isLiked && <span className="ml-1 text-sm" aria-hidden="true">💕</span>}
           </Button>
           
           <Button 
             variant="ghost" 
             size="sm"
             onClick={handleComment}
-            className="btn-cute bg-white/80 hover:bg-blue-50 text-gray-600 hover:text-blue-500 border border-blue-200 gap-2 px-4 py-2 transition-all duration-300 hover:scale-110"
+            className="btn-cute bg-white hover:bg-blue-50 text-gray-700 hover:text-blue-600 border-2 border-blue-200 hover:border-blue-300 gap-2.5 px-5 py-2.5 transition-all duration-300 hover:scale-110 min-h-[44px] text-sm font-bold"
+            aria-label={`${cat.name} 댓글 작성 (현재 ${cat.comments}개)`}
           >
-            <MessageCircle className="w-4 h-4" />
-            <span className="font-medium">{cat.comments}</span>
-            <span className="ml-1">💬</span>
+            <MessageCircle className="w-5 h-5" aria-hidden="true" />
+            <span className="font-bold text-base">{cat.comments}</span>
+            <span className="ml-1 text-sm" aria-hidden="true">💬</span>
           </Button>
         </div>
 
@@ -200,9 +206,10 @@ export function CatCard({ cat, onLike, onComment, onShare, onClick }: CatCardPro
           variant="ghost" 
           size="sm"
           onClick={handleShare}
-          className="btn-cute bg-white/80 hover:bg-green-50 text-gray-600 hover:text-green-500 border border-green-200 w-10 h-10 rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12"
+          className="btn-cute bg-white hover:bg-green-50 text-gray-700 hover:text-green-600 border-2 border-green-200 hover:border-green-300 min-w-[48px] min-h-[44px] rounded-full transition-all duration-300 hover:scale-110 hover:rotate-12"
+          aria-label={`${cat.name} 정보 공유하기`}
         >
-          <Share2 className="w-4 h-4" />
+          <Share2 className="w-5 h-5" aria-hidden="true" />
         </Button>
       </CardFooter>
     </Card>

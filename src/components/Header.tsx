@@ -43,6 +43,13 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
     }
   };
   
+  // ESC 키로 메뉴 닫기
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape' && isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+  
   const handleNavigationClick = (viewId: string) => {
     if (isAddingCat && hasFormContent) {
       const confirmLeave = window.confirm('고양이 등록을 취소하시겠습니까? 작성한 내용이 사라집니다.');
