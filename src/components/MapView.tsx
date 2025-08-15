@@ -9,9 +9,12 @@ import {
   TrendingUp,
   Activity,
   Calendar,
-  Sparkles
+  Sparkles,
+  AlertCircle
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { KakaoMap } from './KakaoMap';
+import { hasKakaoApiKey } from '../utils/kakaoMapLoader';
 
 interface CatLocation {
   id: string;
@@ -22,7 +25,9 @@ interface CatLocation {
   lastSeen: string;
   reportCount: number;
   isNeutered: boolean;
+  gender: 'male' | 'female' | 'unknown';
   characteristics: string[];
+  description?: string;
 }
 
 interface MapViewProps {
@@ -77,11 +82,29 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
   const [selectedCat, setSelectedCat] = useState<CatLocation | null>(null);
   const [sightingRecords, setSightingRecords] = useState<SightingRecord[]>([]);
   const [showRoute, setShowRoute] = useState(false);
+  const [viewMode, setViewMode] = useState<'map' | 'timeline'>('map');
+  
+  // 고양이에 임시 좌표와 성별 정보 추가
+  const enrichedCats = cats.map((cat, index) => ({
+    ...cat,
+    lat: cat.lat || (37.5665 + (Math.random() - 0.5) * 0.02), // 서울 시청 근처 랜덤 좌표
+    lng: cat.lng || (126.9780 + (Math.random() - 0.5) * 0.02),
+    gender: cat.gender || (['male', 'female', 'unknown'][Math.floor(Math.random() * 3)] as 'male' | 'female' | 'unknown')
+  }));
 
   const handleCatSelect = (cat: CatLocation) => {
     setSelectedCat(cat);
     setSightingRecords(generateSightingRecords(cat.id, cat.name));
     setShowRoute(false);
+  };
+
+  const handleMapCatSelect = (catId: string) => {
+    const cat = enrichedCats.find(c => c.id === catId);
+    if (cat) {
+      handleCatSelect(cat);
+      setViewMode('timeline');
+    }
+    onCatSelect(catId);
   };
 
   const handleShowRoute = () => {
@@ -95,16 +118,104 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
         <div className="relative inline-block">
           <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
             <span className="text-5xl">🗺️</span>
-            고양이 이동 경로
+            고양이 지도
             <span className="text-3xl">🐾</span>
           </h2>
-          <p className="text-pink-400 mt-3 text-xl font-medium">우리 동네 고양이들의 활동 패턴을 확인해보세요 💕✨</p>
+          <p className="text-pink-400 mt-3 text-xl font-medium">우리 동네 고양이들의 실시간 위치를 확인해보세요 💕✨</p>
           <div className="absolute -top-4 -right-12 text-yellow-400 text-3xl animate-bounce">✨</div>
           <div className="absolute -bottom-2 -left-8 text-pink-400 text-2xl animate-pulse">💕</div>
         </div>
+        
+        {/* 뷰 모드 선택 */}
+        <div className="flex justify-center gap-4 mt-6">
+          <Button
+            onClick={() => setViewMode('map')}
+            className={`btn-cute ${viewMode === 'map' ? 'btn-cute-primary' : 'btn-cute-secondary'}`}
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            실시간 지도
+          </Button>
+          <Button
+            onClick={() => setViewMode('timeline')}
+            className={`btn-cute ${viewMode === 'timeline' ? 'btn-cute-primary' : 'btn-cute-secondary'}`}
+          >
+            <Calendar className="w-4 h-4 mr-2" />
+            활동 패턴
+          </Button>
+        </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      {/* 카카오맵이 없을 때 알림 */}
+      {!hasKakaoApiKey() && (
+        <div className="card-cute bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 p-6 mb-6">
+          <div className="flex items-center gap-3">
+            <AlertCircle className="w-6 h-6 text-yellow-600" />
+            <div>
+              <h3 className="font-bold text-yellow-700">지도 API 키 설정 필요</h3>
+              <p className="text-yellow-600 text-sm mt-1">
+                카카오맵을 사용하려면 .env 파일에 REACT_APP_KAKAO_API_KEY를 설정해주세요.
+                <br />현재는 활동 패턴만 확인하실 수 있습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {viewMode === 'map' ? (
+        /* 실제 지도 뷰 */
+        <div className="space-y-6">
+          {hasKakaoApiKey() ? (
+            <KakaoMap 
+              cats={enrichedCats}
+              onCatSelect={handleMapCatSelect}
+              className="w-full"
+            />
+          ) : (
+            <div className="w-full h-[600px] bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl flex items-center justify-center border-2 border-dashed border-pink-300">
+              <div className="text-center">
+                <div className="text-6xl mb-4">🗺️</div>
+                <h3 className="text-2xl font-bold text-pink-600 mb-3">
+                  지도 준비 중
+                </h3>
+                <p className="text-purple-500">
+                  카카오맵 API 설정 후 실제 지도를 볼 수 있어요<br />
+                  지금은 아래 활동 패턴을 확인해보세요! 🐾
+                </p>
+              </div>
+            </div>
+          )}
+          
+          {/* 지도 통계 */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="card-cute bg-gradient-to-r from-pink-50 to-pink-100 p-4 text-center">
+              <div className="text-2xl mb-2">🐱</div>
+              <div className="text-2xl font-bold text-pink-600">{enrichedCats.length}</div>
+              <div className="text-sm text-pink-500">등록된 고양이</div>
+            </div>
+            <div className="card-cute bg-gradient-to-r from-purple-50 to-purple-100 p-4 text-center">
+              <div className="text-2xl mb-2">✂️</div>
+              <div className="text-2xl font-bold text-purple-600">
+                {enrichedCats.filter(cat => cat.isNeutered).length}
+              </div>
+              <div className="text-sm text-purple-500">중성화 완료</div>
+            </div>
+            <div className="card-cute bg-gradient-to-r from-green-50 to-green-100 p-4 text-center">
+              <div className="text-2xl mb-2">👁️</div>
+              <div className="text-2xl font-bold text-green-600">
+                {enrichedCats.reduce((sum, cat) => sum + cat.reportCount, 0)}
+              </div>
+              <div className="text-sm text-green-500">총 목격 횟수</div>
+            </div>
+            <div className="card-cute bg-gradient-to-r from-blue-50 to-blue-100 p-4 text-center">
+              <div className="text-2xl mb-2">📍</div>
+              <div className="text-2xl font-bold text-blue-600">5</div>
+              <div className="text-sm text-blue-500">활동 지역</div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* 기존 타임라인 뷰 */
+        <div className="grid lg:grid-cols-3 gap-6">
         {/* Cat List */}
         <div className="lg:col-span-1 space-y-4">
           <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-pink-50 to-purple-50 p-4">
@@ -313,7 +424,8 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
             </div>
           )}
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }

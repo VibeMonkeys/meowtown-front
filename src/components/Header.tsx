@@ -14,6 +14,7 @@ import {
   X
 } from 'lucide-react';
 import { Input } from './ui/input';
+import { SearchSuggestions } from './ui/SearchSuggestions';
 
 interface HeaderProps {
   currentView: string;
@@ -69,7 +70,7 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
   ];
 
   return (
-    <header className="sticky top-0 z-50 card-cute backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b-0 shadow-lg">
+    <header className="sticky top-0 z-50 card-cute backdrop-blur border-b-0 shadow-lg" style={{background: 'rgba(255, 255, 255, 0.6)'}}>
       <div className="container mx-auto px-4">
         {/* Main Header */}
         <div className="flex items-center justify-between h-20">
@@ -100,18 +101,15 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
 
           {/* Desktop Search */}
           <div className="hidden md:flex flex-1 max-w-md mx-8">
-            <form onSubmit={handleSearch} className="relative w-full">
-              <Input
-                type="search"
-                placeholder="어떤 냥이를 찾고 계신가요? 🔍"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-cute pl-6 pr-12 h-12 text-sm placeholder:text-pink-300"
-              />
-              <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-pink-300 z-10 pointer-events-none">
-                🐾
-              </div>
-            </form>
+            <SearchSuggestions
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={(query) => {
+                setSearchQuery(query);
+                onSearch?.(query);
+              }}
+              placeholder="어떤 냥이를 찾고 계신가요? 🔍"
+            />
           </div>
 
           {/* Actions */}
@@ -192,15 +190,16 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
 
         {/* Mobile Search */}
         <div className="md:hidden pb-3">
-          <form onSubmit={handleSearch} className="relative">
-            <Input
-              type="search"
-              placeholder="고양이 검색..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-4"
-            />
-          </form>
+          <SearchSuggestions
+            value={searchQuery}
+            onChange={setSearchQuery}
+            onSearch={(query) => {
+              setSearchQuery(query);
+              onSearch?.(query);
+            }}
+            placeholder="고양이 검색... 🔍"
+            className="w-full"
+          />
         </div>
       </div>
 

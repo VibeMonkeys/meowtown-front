@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { CuteAlert, useCuteAlert } from './components/ui/CuteAlert';
+import { CuteSkeleton } from './components/ui/CuteSkeleton';
 import { Header } from './components/Header';
 import { CatCard } from './components/CatCard';
 import { StatsSection } from './components/StatsSection';
@@ -101,9 +103,11 @@ interface SightingRecord {
 export default function App() {
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
@@ -844,16 +848,7 @@ function AppContent() {
 
             {isSearching ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="p-6 bg-card rounded-lg border animate-pulse">
-                    <div className="w-full h-48 bg-muted rounded-lg mb-4"></div>
-                    <div className="space-y-2">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                      <div className="h-3 bg-muted rounded w-1/2"></div>
-                      <div className="h-3 bg-muted rounded w-2/3"></div>
-                    </div>
-                  </div>
-                ))}
+                <CuteSkeleton variant="cat-card" count={6} className="skeleton-progressive" />
               </div>
             ) : searchResults.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -957,29 +952,7 @@ function AppContent() {
 
             {loading ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[...Array(6)].map((_, i) => (
-                  <div key={i} className="card-cute p-6 relative overflow-hidden">
-                    {/* Cute Loading Animation */}
-                    <div className="absolute inset-0 loading-cute opacity-20"></div>
-                    
-                    <div className="relative z-10">
-                      <div className="w-full h-48 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl mb-4 flex items-center justify-center">
-                        <div className="text-4xl animate-bounce" style={{ animationDelay: `${i * 200}ms` }}>
-                          🐱
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="h-4 bg-gradient-to-r from-pink-200 to-purple-200 rounded-full w-3/4"></div>
-                        <div className="h-3 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full w-1/2"></div>
-                        <div className="h-3 bg-gradient-to-r from-pink-200 to-purple-200 rounded-full w-2/3"></div>
-                      </div>
-                      
-                      {/* Floating sparkles */}
-                      <div className="absolute top-2 right-2 text-yellow-400 text-sm animate-ping">✨</div>
-                      <div className="absolute bottom-4 left-2 text-pink-400 text-xs animate-pulse">💕</div>
-                    </div>
-                  </div>
-                ))}
+                <CuteSkeleton variant="cat-card" count={6} className="skeleton-progressive" />
               </div>
             ) : error ? (
               <div className="text-center py-16">
@@ -1260,26 +1233,17 @@ function AppContent() {
             <StatsSection stats={getStats(cats.length)} />
 
             {/* Recent Cats */}
-            <div className="space-y-6">
+            <div className="card-cute bg-gradient-to-br from-white to-pink-25 p-8 space-y-6">
               <div className="text-center">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-2">
                   🐾 최근 등록된 고양이들
                 </h2>
-                <p className="text-pink-400 text-lg">이웃들이 새로 발견한 귀여운 냥이들 😻✨</p>
+                <p className="text-pink-600 dark:text-pink-300 text-lg">이웃들이 새로 발견한 귀여운 냥이들 😻✨</p>
               </div>
 
               {loading ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="p-6 bg-card rounded-lg border animate-pulse">
-                      <div className="w-full h-48 bg-muted rounded-lg mb-4"></div>
-                      <div className="space-y-2">
-                        <div className="h-4 bg-muted rounded w-3/4"></div>
-                        <div className="h-3 bg-muted rounded w-1/2"></div>
-                        <div className="h-3 bg-muted rounded w-2/3"></div>
-                      </div>
-                    </div>
-                  ))}
+                  <CuteSkeleton variant="cat-card" count={3} className="skeleton-progressive" />
                 </div>
               ) : error ? (
                 <div className="text-center py-8">
@@ -1318,7 +1282,7 @@ function AppContent() {
               {cats.length > 0 && (
                 <div className="text-center">
                   <Button 
-                    className="btn-cute bg-gradient-to-r from-purple-100 to-pink-100 text-purple-600 hover:from-purple-200 hover:to-pink-200 px-8 py-3" 
+                    className="btn-cute bg-gradient-to-r from-purple-200 to-pink-200 text-purple-800 hover:from-purple-300 hover:to-pink-300 px-8 py-3" 
                     onClick={() => setCurrentView('guide')}
                   >
                     전체 고양이 보기
@@ -1398,11 +1362,21 @@ function AppContent() {
   // 인증 로딩 중에는 로딩 화면 표시
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-6xl mb-4 animate-bounce">🐱</div>
-          <p className="text-xl text-pink-500">로그인 상태를 확인하는 중...</p>
-        </div>
+      <div className="min-h-screen bg-background">
+        <CuteSkeleton variant="header" />
+        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-pink-200 to-purple-200 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce mb-4">
+              <span className="text-5xl">🐱</span>
+            </div>
+            <div className="h-12 bg-gradient-to-r from-pink-200 to-purple-200 rounded-full w-80 mx-auto mb-3 animate-pulse"></div>
+            <div className="h-6 bg-gradient-to-r from-purple-200 to-pink-200 rounded-full w-60 mx-auto animate-pulse"></div>
+          </div>
+          <CuteSkeleton variant="stats" />
+          <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <CuteSkeleton variant="cat-card" count={3} className="skeleton-progressive" />
+          </div>
+        </main>
       </div>
     );
   }

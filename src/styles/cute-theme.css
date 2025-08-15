@@ -1,6 +1,41 @@
 /* 🐱 MeowTown - Cute Theme Design System */
 
 :root {
+  /* 🌙 High Contrast Dark Mode Palette - iOS Style */
+  --dark-bg-primary: #000000;
+  --dark-bg-secondary: #1c1c1e;
+  --dark-bg-tertiary: #2c2c2e;
+  --dark-bg-card: #1c1c1e;
+  --dark-bg-elevated: #2c2c2e;
+  --dark-bg-surface: #3a3a3c;
+  --dark-bg-hover: #48484a;
+  
+  /* High Contrast Text Colors */
+  --dark-text-primary: #ffffff;
+  --dark-text-secondary: #ffffff;
+  --dark-text-muted: #8e8e93;
+  --dark-text-subtle: #636366;
+  --dark-text-disabled: #48484a;
+  
+  /* Enhanced Brand Colors for Dark */
+  --dark-pink-500: #ff6b9d;
+  --dark-pink-400: #ff8ab3;
+  --dark-pink-300: #ffa8c8;
+  --dark-pink-200: #ffc7dd;
+  --dark-pink-100: #ffe5f2;
+  --dark-pink-50: #fff2f8;
+  
+  --dark-purple-500: #9c88ff;
+  --dark-purple-400: #b5a7ff;
+  --dark-purple-300: #cdc5ff;
+  --dark-purple-200: #e6e4ff;
+  --dark-purple-100: #f3f2ff;
+  --dark-purple-50: #f9f8ff;
+  
+  /* Accent Colors */
+  --dark-accent-warm: #34344c;
+  --dark-accent-cool: #2d3748;
+  --dark-accent-neutral: #374151;
   /* 🎀 Primary Colors - Soft Pink Theme */
   --primary-50: #fdf2f8;
   --primary-100: #fce7f3;
@@ -504,4 +539,560 @@ body {
   border-color: var(--primary-400);
   box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
   background: white;
+}
+
+/* 🌈 Skeleton Loading Animations */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.shimmer-effect {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.skeleton-pulse {
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.skeleton-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 🐱 Skeleton Cute Elements */
+.skeleton-cute {
+  background: linear-gradient(
+    90deg,
+    var(--primary-100) 25%,
+    var(--primary-50) 50%,
+    var(--primary-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--border-radius-lg);
+}
+
+.skeleton-avatar {
+  background: linear-gradient(
+    135deg,
+    var(--primary-200) 0%,
+    var(--accent-lavender) 50%,
+    var(--primary-200) 100%
+  );
+  background-size: 400% 400%;
+  animation: rainbow 2s ease infinite;
+}
+
+.skeleton-text {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite;
+}
+
+/* 💫 Cute Loading States */
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(20px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.skeleton-appear {
+  animation: bounceIn 0.6s ease-out;
+}
+
+/* 🌟 Progressive Loading Effect */
+.skeleton-progressive {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: progressiveLoad 0.8s ease-out forwards;
+}
+
+@keyframes progressiveLoad {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skeleton-progressive:nth-child(1) { animation-delay: 0.1s; }
+.skeleton-progressive:nth-child(2) { animation-delay: 0.2s; }
+.skeleton-progressive:nth-child(3) { animation-delay: 0.3s; }
+.skeleton-progressive:nth-child(4) { animation-delay: 0.4s; }
+.skeleton-progressive:nth-child(5) { animation-delay: 0.5s; }
+.skeleton-progressive:nth-child(6) { animation-delay: 0.6s; }
+
+/* 🎪 FloatingActions 애니메이션 */
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(100px) scale(0.5);
+    opacity: 0;
+  }
+  50% {
+    transform: translateX(-10px) scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-slideInFromRight {
+  animation: slideInFromRight 0.6s ease-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(236, 72, 153, 0.6), 0 0 40px rgba(139, 92, 246, 0.3);
+  }
+}
+
+.floating-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* 🌙 High Contrast Dark Mode System - iOS Style */
+.dark {
+  /* Clean Solid Backgrounds */
+  --gradient-primary: var(--dark-bg-primary);
+  --gradient-secondary: var(--dark-bg-card);
+  --gradient-accent: linear-gradient(135deg, var(--dark-pink-500) 0%, var(--dark-purple-500) 100%);
+  --gradient-card: var(--dark-bg-card);
+  --gradient-surface: var(--dark-bg-elevated);
+  
+  /* Text colors */
+  color: var(--dark-text-primary);
+}
+
+.dark body {
+  background: var(--gradient-primary);
+  color: var(--dark-text-primary);
+}
+
+/* High Contrast Dark Mode Cards - iOS Style */
+.dark .card-cute {
+  background: var(--dark-bg-card);
+  border: 1px solid var(--dark-bg-surface);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+}
+
+.dark .card-cute:hover {
+  background: var(--dark-bg-elevated);
+  border-color: var(--dark-bg-hover);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Professional Dark Mode Buttons */
+.dark .btn-cute-primary {
+  background: linear-gradient(135deg, var(--dark-pink-500), var(--dark-purple-500));
+  color: white;
+  box-shadow: 
+    0 4px 16px 0 rgba(156, 136, 255, 0.3),
+    0 2px 4px 0 rgba(10, 10, 15, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .btn-cute-primary:hover {
+  background: linear-gradient(135deg, var(--dark-pink-400), var(--dark-purple-400));
+  box-shadow: 
+    0 8px 24px 0 rgba(156, 136, 255, 0.4),
+    0 4px 8px 0 rgba(10, 10, 15, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.dark .btn-cute-secondary {
+  background: var(--dark-bg-elevated);
+  color: var(--dark-text-primary);
+  border: 1px solid rgba(156, 136, 255, 0.2);
+  box-shadow: 0 2px 8px 0 rgba(10, 10, 15, 0.3);
+}
+
+.dark .btn-cute-secondary:hover {
+  background: var(--dark-bg-surface);
+  border-color: rgba(156, 136, 255, 0.4);
+  box-shadow: 0 4px 12px 0 rgba(10, 10, 15, 0.4);
+}
+
+.dark .btn-cute-ghost {
+  background: rgba(30, 30, 46, 0.6);
+  color: var(--dark-text-secondary);
+  border: 1px solid rgba(156, 136, 255, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+.dark .btn-cute-ghost:hover {
+  background: rgba(30, 30, 46, 0.8);
+  border-color: rgba(156, 136, 255, 0.3);
+  color: var(--dark-text-primary);
+}
+
+/* Dark mode inputs */
+.dark .input-cute {
+  background: var(--dark-bg-tertiary);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: var(--dark-text-primary);
+}
+
+.dark .input-cute:focus {
+  border-color: var(--dark-pink-400);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.2);
+  background: var(--dark-bg-secondary);
+}
+
+.dark .input-cute::placeholder {
+  color: var(--dark-text-muted);
+}
+
+/* Dark mode badges */
+.dark .badge-gender-male {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.dark .badge-gender-female {
+  background: linear-gradient(135deg, var(--dark-pink-500), var(--dark-pink-400));
+}
+
+.dark .badge-gender-unknown {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+}
+
+/* Professional Dark Mode Text Colors */
+.dark .text-pink-600 {
+  color: var(--dark-pink-400);
+}
+
+.dark .text-pink-500 {
+  color: var(--dark-pink-400);
+}
+
+.dark .text-pink-400 {
+  color: var(--dark-pink-300);
+}
+
+.dark .text-purple-600 {
+  color: var(--dark-purple-400);
+}
+
+.dark .text-purple-500 {
+  color: var(--dark-purple-400);
+}
+
+.dark .text-gray-900 {
+  color: var(--dark-text-primary);
+}
+
+.dark .text-gray-800 {
+  color: var(--dark-text-primary);
+}
+
+.dark .text-gray-700 {
+  color: var(--dark-text-secondary);
+}
+
+.dark .text-gray-600 {
+  color: var(--dark-text-muted);
+}
+
+.dark .text-gray-500 {
+  color: var(--dark-text-subtle);
+}
+
+.dark .text-gray-400 {
+  color: var(--dark-text-disabled);
+}
+
+/* Professional Dark Mode Backgrounds */
+.dark .bg-pink-50 {
+  background: var(--dark-bg-card);
+}
+
+.dark .bg-pink-100 {
+  background: var(--dark-bg-elevated);
+}
+
+.dark .bg-purple-50 {
+  background: var(--dark-bg-card);
+}
+
+.dark .bg-purple-100 {
+  background: var(--dark-bg-elevated);
+}
+
+.dark .bg-white {
+  background: var(--gradient-card);
+}
+
+.dark .bg-gray-50 {
+  background: var(--dark-bg-card);
+}
+
+.dark .bg-gray-100 {
+  background: var(--dark-bg-elevated);
+}
+
+.dark .bg-gray-200 {
+  background: var(--dark-bg-surface);
+}
+
+.dark .bg-gradient-to-br.from-white.to-pink-50 {
+  background: var(--gradient-card);
+}
+
+.dark .bg-gradient-to-br.from-white.to-pink-25 {
+  background: var(--gradient-card);
+}
+
+/* iOS Style Glass Effects */
+.dark .backdrop-blur {
+  backdrop-filter: blur(20px) saturate(1.8);
+  background: rgba(28, 28, 30, 0.9) !important;
+}
+
+/* Dark mode header - iOS style */
+.dark header {
+  background: rgba(28, 28, 30, 0.95) !important;
+  backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 1px solid var(--dark-bg-surface);
+}
+
+/* Light mode: Keep original pink/white gradients for all sections */
+.bg-gradient-to-br.from-white.to-pink-25 {
+  background: linear-gradient(to bottom right, #ffffff, #fef7f7) !important;
+  color: #1f2937;
+}
+
+.bg-gradient-to-br.from-white.to-purple-25 {
+  background: linear-gradient(to bottom right, #ffffff, #faf5ff) !important;  
+  color: #1f2937;
+}
+
+.bg-gradient-to-br.from-white.to-green-25 {
+  background: linear-gradient(to bottom right, #ffffff, #f0fff4) !important;
+  color: #1f2937;
+}
+
+.bg-gradient-to-br.from-gray-800.to-gray-900 .text-gray-300 {
+  color: #e5e7eb; /* Light gray text for light mode */
+}
+
+.bg-gradient-to-br.from-gray-800.to-gray-900 .text-gray-400 {
+  color: #9ca3af; /* Muted text for light mode */
+}
+
+.bg-black\/40 {
+  background: rgba(0, 0, 0, 0.4) !important; /* Light mode semi-transparent black */
+}
+
+.bg-gray-700 {
+  background: #374151 !important; /* Light mode dark gray */
+}
+
+.border-gray-600 {
+  border-color: #4b5563 !important; /* Light mode border */
+}
+
+/* Light mode border color adjustments for dark backgrounds */
+.bg-gradient-to-br.from-gray-800.to-gray-900.border-pink-500 {
+  border-color: #ec4899 !important;
+}
+
+.bg-gradient-to-br.from-gray-800.to-gray-900.border-blue-500 {
+  border-color: #3b82f6 !important;
+}
+
+.bg-gradient-to-br.from-gray-800.to-gray-900.border-green-500 {
+  border-color: #10b981 !important;
+}
+
+.bg-gradient-to-br.from-gray-800.to-gray-900.border-purple-500 {
+  border-color: #8b5cf6 !important;
+}
+
+/* Dark mode: Use dark backgrounds for all sections */
+.dark .bg-gradient-to-br.from-white.to-pink-25 {
+  background: linear-gradient(to bottom right, var(--dark-bg-card), var(--dark-bg-elevated)) !important;
+  border: 1px solid var(--dark-bg-surface);
+  color: var(--dark-text-primary);
+}
+
+.dark .bg-gradient-to-br.from-white.to-purple-25 {
+  background: linear-gradient(to bottom right, var(--dark-bg-card), var(--dark-bg-elevated)) !important;
+  border: 1px solid var(--dark-bg-surface);
+  color: var(--dark-text-primary);
+}
+
+.dark .bg-gradient-to-br.from-white.to-green-25 {
+  background: linear-gradient(to bottom right, var(--dark-bg-card), var(--dark-bg-elevated)) !important;
+  border: 1px solid var(--dark-bg-surface);
+  color: var(--dark-text-primary);
+}
+
+.dark .bg-gradient-to-br.from-gray-800.to-gray-900 .text-pink-300 {
+  color: var(--dark-pink-300);
+}
+
+.dark .bg-gradient-to-br.from-gray-800.to-gray-900 .text-white {
+  color: var(--dark-text-primary);
+}
+
+.dark .bg-gradient-to-br.from-gray-800.to-gray-900 .text-gray-300 {
+  color: var(--dark-text-primary);
+}
+
+.dark .bg-gradient-to-br.from-gray-800.to-gray-900 .text-gray-400 {
+  color: var(--dark-text-muted);
+}
+
+.dark .bg-black\/40 {
+  background: rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .bg-gray-700 {
+  background: var(--dark-bg-surface) !important;
+}
+
+.dark .border-gray-600 {
+  border-color: var(--dark-bg-hover) !important;
+}
+
+/* Dark mode borders */
+.dark .border-pink-200 {
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.dark .border-pink-100 {
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.dark .border-purple-200 {
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Dark mode skeletons */
+.dark .skeleton-cute {
+  background: linear-gradient(
+    90deg,
+    var(--dark-bg-tertiary) 25%,
+    var(--dark-bg-secondary) 50%,
+    var(--dark-bg-tertiary) 75%
+  );
+}
+
+.dark .skeleton-avatar {
+  background: linear-gradient(
+    135deg,
+    rgba(139, 92, 246, 0.3) 0%,
+    rgba(236, 72, 153, 0.3) 50%,
+    rgba(139, 92, 246, 0.3) 100%
+  );
+}
+
+/* Dark mode special effects */
+.dark .loading-cute {
+  background: linear-gradient(-45deg, 
+    rgba(139, 92, 246, 0.2), 
+    rgba(236, 72, 153, 0.2), 
+    rgba(168, 85, 247, 0.2), 
+    rgba(139, 92, 246, 0.2)
+  );
+}
+
+/* Dark mode search suggestions */
+.dark .search-suggestions {
+  background: var(--dark-bg-secondary);
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.dark .search-suggestion-item:hover {
+  background: var(--dark-bg-tertiary);
+}
+
+/* Dark mode notifications */
+.dark .notification-cute {
+  background: var(--dark-bg-secondary);
+  border-left-color: var(--dark-pink-400);
+  box-shadow: 0 10px 15px -3px rgba(15, 15, 35, 0.3), 0 4px 6px -4px rgba(139, 92, 246, 0.1);
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Dark mode specific cute elements */
+.dark .sparkle {
+  background: var(--dark-purple-400);
+}
+
+.dark .heart-liked {
+  color: var(--dark-pink-400);
+  filter: drop-shadow(0 0 6px rgba(244, 114, 182, 0.5));
+}
+
+/* Dark mode CuteAlert */
+.dark .cute-alert {
+  background: var(--dark-bg-secondary);
+  border-color: rgba(139, 92, 246, 0.3);
+  color: var(--dark-text-primary);
+}
+
+.dark .cute-alert-success {
+  border-left-color: #10b981;
+}
+
+.dark .cute-alert-error {
+  border-left-color: #ef4444;
+}
+
+.dark .cute-alert-warning {
+  border-left-color: #f59e0b;
+}
+
+.dark .cute-alert-info {
+  border-left-color: var(--dark-purple-400);
 }

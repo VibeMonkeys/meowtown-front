@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Plus, Heart, MessageSquare, Camera, Sparkles } from 'lucide-react';
+import { Plus, Heart, MessageSquare, Camera, Sparkles, Moon, Sun } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface FloatingActionsProps {
   onAddCat?: () => void;
@@ -10,6 +11,7 @@ interface FloatingActionsProps {
 
 export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: FloatingActionsProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const actions = [
     {
@@ -39,14 +41,23 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: Float
       onClick: () => {},
       color: 'from-green-400 to-blue-500',
       emoji: '📸'
+    },
+    {
+      icon: theme === 'dark' ? Sun : Moon,
+      label: theme === 'dark' ? '라이트 모드' : '다크 모드',
+      onClick: toggleTheme,
+      color: theme === 'dark' 
+        ? 'from-yellow-400 to-orange-500' 
+        : 'from-indigo-500 to-purple-600',
+      emoji: theme === 'dark' ? '☀️' : '🌙'
     }
   ];
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
       {/* Action Buttons */}
-      <div className={`flex flex-col gap-3 mb-4 transition-all duration-300 transform ${
-        isOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-4 opacity-0 scale-75 pointer-events-none'
+      <div className={`flex flex-col gap-3 mb-4 transition-all duration-500 transform ${
+        isOpen ? 'translate-y-0 opacity-100 scale-100' : 'translate-y-8 opacity-0 scale-75 pointer-events-none'
       }`}>
         {actions.map((action, index) => {
           const Icon = action.icon;
@@ -54,10 +65,20 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: Float
             <Button
               key={action.label}
               onClick={action.onClick}
-              className={`relative w-14 h-14 rounded-full bg-gradient-to-r ${action.color} text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group`}
-              style={{ animationDelay: `${index * 50}ms` }}
+              className={`relative w-14 h-14 rounded-full bg-gradient-to-r ${action.color} text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group ${
+                isOpen ? 'animate-slideInFromRight' : ''
+              }`}
+              style={{ 
+                animationDelay: isOpen ? `${index * 100}ms` : '0ms',
+                animationFillMode: 'both'
+              }}
             >
-              <Icon className="w-6 h-6" />
+              <Icon className={`w-6 h-6 ${
+                action.label.includes('모드') ? (theme === 'dark' ? 'animate-spin' : 'animate-pulse') : ''
+              }`} 
+              style={{
+                animationDuration: action.label.includes('모드') ? (theme === 'dark' ? '8s' : '2s') : undefined
+              }} />
               
               {/* Tooltip */}
               <div className="absolute right-16 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
@@ -75,7 +96,7 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: Float
       {/* Main Toggle Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 ${
+        className={`relative w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 floating-glow ${
           isOpen ? 'rotate-45' : ''
         }`}
       >
