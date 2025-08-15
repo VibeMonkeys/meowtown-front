@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { CuteAlert, useCuteAlert } from './components/ui/CuteAlert';
+import { CuteInputDialog } from './components/ui/CuteInputDialog';
 import { CuteSkeleton } from './components/ui/CuteSkeleton';
 import { Header } from './components/Header';
 import { CatCard } from './components/CatCard';
@@ -104,6 +105,19 @@ function AppContent() {
   const [communityLoading, setCommunityLoading] = useState(false);
   const [sightingRecords, setSightingRecords] = useState<SightingRecord[]>([]);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+  const [inputDialog, setInputDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    placeholder?: string;
+    defaultValue?: string;
+    multiline?: boolean;
+    icon?: string;
+    onConfirm: (value: string) => void;
+  }>({
+    isOpen: false,
+    title: '',
+    onConfirm: () => {}
+  });
   
   // 현재 사용자명 (로그인된 사용자 또는 기본값)
   const currentUserName = currentUser?.displayName || '익명 사용자';
@@ -399,42 +413,49 @@ function AppContent() {
     const cat = cats.find(c => c.id === catId) || detailCat;
     if (!cat) return;
     
-    const commentContent = prompt(`${cat.name}에게 댓글을 남겨주세요:`);
-    if (!commentContent || !commentContent.trim()) return;
-    
-    // 댓글 수 증가
-    setCats(prevCats => 
-      prevCats.map(c => {
-        if (c.id === catId) {
-          return {
-            ...c,
-            comments: c.comments + 1
-          };
+    setInputDialog({
+      isOpen: true,
+      title: `${cat.name}에게 댓글 남기기`,
+      placeholder: '따뜻한 댓글을 남겨주세요... 💕',
+      icon: '💬',
+      multiline: true,
+      onConfirm: (commentContent) => {
+        // 댓글 수 증가
+        setCats(prevCats => 
+          prevCats.map(c => {
+            if (c.id === catId) {
+              return {
+                ...c,
+                comments: c.comments + 1
+              };
+            }
+            return c;
+          })
+        );
+        
+        // detailCat도 업데이트
+        if (detailCat && detailCat.id === catId) {
+          setDetailCat(prev => prev ? { ...prev, comments: prev.comments + 1 } : null);
         }
-        return c;
-      })
-    );
-    
-    // detailCat도 업데이트
-    if (detailCat && detailCat.id === catId) {
-      setDetailCat(prev => prev ? { ...prev, comments: prev.comments + 1 } : null);
-    }
-    
-    // 알림 생성
-    const newNotification: Notification = {
-      id: Date.now().toString(),
-      type: 'cat_commented',
-      title: '댓글 알림',
-      message: `${cat.name}에게 댓글을 남겼습니다: "${commentContent.slice(0, 20)}${commentContent.length > 20 ? '...' : ''}"`,
-      time: '방금 전',
-      isRead: false,
-      catName: cat.name,
-      userName: currentUserName
-    };
-    setNotifications(prev => [newNotification, ...prev]);
-    
-    showSuccess('댓글이 등록되었습니다!', '댓글 작성 완료 😸', 3000);
-    console.log('댓글:', catId, commentContent);
+        
+        // 알림 생성
+        const newNotification: Notification = {
+          id: Date.now().toString(),
+          type: 'cat_commented',
+          title: '댓글 알림',
+          message: `${cat.name}에게 댓글을 남겼습니다: "${commentContent.slice(0, 20)}${commentContent.length > 20 ? '...' : ''}"`,
+          time: '방금 전',
+          isRead: false,
+          catName: cat.name,
+          userName: currentUserName
+        };
+        setNotifications(prev => [newNotification, ...prev]);
+        
+        showSuccess('댓글이 등록되었습니다!', '댓글 작성 완료 😸', 3000);
+        console.log('댓글:', catId, commentContent);
+        setInputDialog(prev => ({ ...prev, isOpen: false }));
+      }
+    });
   };
 
   const handleCatShare = (catId: string) => {
@@ -464,10 +485,30 @@ function AppContent() {
       navigator.clipboard.writeText(shareText).then(() => {
         showSuccess('공유 링크가 클립보드에 복사되었습니다!', '클립보드 복사 완료 📋', 3000);
       }).catch(() => {
-        prompt('아래 텍스트를 복사해서 공유해주세요:', shareText);
+        setInputDialog({
+          isOpen: true,
+          title: '공유하기',
+          placeholder: '',
+          defaultValue: shareText,
+          icon: '📋',
+          multiline: true,
+          onConfirm: () => {
+            setInputDialog(prev => ({ ...prev, isOpen: false }));
+          }
+        });
       });
     } else {
-      prompt('아래 텍스트를 복사해서 공유해주세요:', shareText);
+      setInputDialog({
+        isOpen: true,
+        title: '공유하기',
+        placeholder: '',
+        defaultValue: shareText,
+        icon: '📋',
+        multiline: true,
+        onConfirm: () => {
+          setInputDialog(prev => ({ ...prev, isOpen: false }));
+        }
+      });
     }
   };
 
@@ -504,12 +545,17 @@ function AppContent() {
   const handlePostComment = async (postId: string) => {
     if (!requireLogin('댓글 작성', () => handlePostComment(postId))) return;
     
-    const commentContent = prompt('댓글을 입력하세요:');
-    if (!commentContent || !commentContent.trim()) return;
+    setInputDialog({
+      isOpen: true,
+      title: '댓글 작성',
+      placeholder: '댓글을 입력해주세요... 💬',
+      icon: '✍️',
+      multiline: true,
+      onConfirm: async (commentContent) => {
     
-    try {
-      // 백엔드 API로 댓글 작성
-      const response = await apiClient.createComment(postId, {
+        try {
+          // 백엔드 API로 댓글 작성
+          const response = await apiClient.createComment(postId, {
         content: commentContent.trim(),
         author: currentUser!.displayName
       });
@@ -551,22 +597,30 @@ function AppContent() {
         
         console.log('댓글 작성 성공:', response.data);
       }
-    } catch (error) {
-      console.error('댓글 작성 에러:', error);
-      showError('댓글 작성 중 오류가 발생했습니다.', '작성 실패 😿');
-    }
+        } catch (error) {
+          console.error('댓글 작성 에러:', error);
+          showError('댓글 작성 중 오류가 발생했습니다.', '작성 실패 😿');
+        } finally {
+          setInputDialog(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
   };
 
   // 대댓글 작성 함수
   const handleReplyComment = async (postId: string, parentCommentId: string) => {
     if (!requireLogin('대댓글 작성', () => handleReplyComment(postId, parentCommentId))) return;
     
-    const replyContent = prompt('대댓글을 입력하세요:');
-    if (!replyContent || !replyContent.trim()) return;
-    
-    try {
-      // 백엔드 API로 대댓글 작성
-      const response = await apiClient.createComment(postId, {
+    setInputDialog({
+      isOpen: true,
+      title: '대댓글 작성',
+      placeholder: '대댓글을 입력해주세요... 💬',
+      icon: '↪️',
+      multiline: true,
+      onConfirm: async (replyContent) => {
+        try {
+          // 백엔드 API로 대댓글 작성
+          const response = await apiClient.createComment(postId, {
         content: replyContent.trim(),
         author: currentUser!.displayName,
         parentId: parentCommentId
@@ -601,10 +655,14 @@ function AppContent() {
         
         console.log('대댓글 등록 성공:', response.data);
       }
-    } catch (error) {
-      console.error('대댓글 등록 에러:', error);
-      showError('대댓글 등록 중 오류가 발생했습니다.', '등록 실패 😿');
-    }
+        } catch (error) {
+          console.error('대댓글 등록 에러:', error);
+          showError('대댓글 등록 중 오류가 발생했습니다.', '등록 실패 😿');
+        } finally {
+          setInputDialog(prev => ({ ...prev, isOpen: false }));
+        }
+      }
+    });
   };
 
   const handleSearch = async (query: string) => {
@@ -702,34 +760,46 @@ function AppContent() {
   const unreadNotificationCount = notifications.filter(n => !n.isRead).length;
 
   // 목격 신고 핸들러
-  const handleSightingReport = (catId: string, sightingInfo: string) => {
-    const newSighting: SightingRecord = {
-      id: Date.now().toString(),
-      catId: catId,
-      type: 'sighting',
-      description: sightingInfo,
-      time: '방금 전',
-      reporter: currentUserName,
-      location: sightingInfo.split(',')[0] || '위치 미상'
-    };
+  const handleSightingReport = (catId: string) => {
+    const cat = cats.find(c => c.id === catId) || detailCat;
+    if (!cat) return;
     
-    setSightingRecords(prev => [newSighting, ...prev]);
-    
-    // 알림 생성
-    const cat = cats.find(c => c.id === catId);
-    if (cat) {
-      const notification: Notification = {
-        id: Date.now().toString(),
-        type: 'cat_sighted',
-        title: '목격 신고',
-        message: `${cat.name}의 목격 정보가 등록되었습니다.`,
-        time: '방금 전',
-        isRead: false,
-        catName: cat.name,
-        userName: currentUserName
-      };
-      setNotifications(prev => [notification, ...prev]);
-    }
+    setInputDialog({
+      isOpen: true,
+      title: `${cat.name} 목격 신고`,
+      placeholder: '위치와 시간을 알려주세요...\n예) 강남역 3번 출구, 오후 3시 🕒',
+      icon: '👀',
+      multiline: true,
+      onConfirm: (sightingInfo) => {
+        const newSighting: SightingRecord = {
+          id: Date.now().toString(),
+          catId: catId,
+          type: 'sighting',
+          description: sightingInfo,
+          time: '방금 전',
+          reporter: currentUserName,
+          location: sightingInfo.split(',')[0] || '위치 미상'
+        };
+        
+        setSightingRecords(prev => [newSighting, ...prev]);
+        
+        // 알림 생성
+        const notification: Notification = {
+          id: Date.now().toString(),
+          type: 'cat_sighted',
+          title: '목격 신고',
+          message: `${cat.name}의 목격 정보가 등록되었습니다.`,
+          time: '방금 전',
+          isRead: false,
+          catName: cat.name,
+          userName: currentUserName
+        };
+        setNotifications(prev => [notification, ...prev]);
+        
+        showSuccess('목격 신고가 접수되었습니다! 🎉\n목격 이력에 추가되었습니다. 감사합니다! 💕', '신고 완료 😸', 4000);
+        setInputDialog(prev => ({ ...prev, isOpen: false }));
+      }
+    });
   };
 
   // 인증 관련 핸들러 - AuthContext로 이동
@@ -1458,6 +1528,18 @@ function AppContent() {
         }}
         onLogin={handleLogin}
         onRegister={handleRegister}
+      />
+
+      {/* Cute Input Dialog */}
+      <CuteInputDialog
+        isOpen={inputDialog.isOpen}
+        onClose={() => setInputDialog(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={inputDialog.onConfirm}
+        title={inputDialog.title}
+        placeholder={inputDialog.placeholder}
+        defaultValue={inputDialog.defaultValue}
+        multiline={inputDialog.multiline}
+        icon={inputDialog.icon}
       />
 
       {/* Cute Alert */}

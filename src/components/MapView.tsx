@@ -13,7 +13,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { KakaoMap } from './KakaoMap';
+import { SimpleKakaoMap } from './SimpleKakaoMap';
 import { hasKakaoApiKey } from '../utils/kakaoMapLoader';
 
 interface CatLocation {
@@ -164,21 +164,21 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
       {viewMode === 'map' ? (
         /* 실제 지도 뷰 */
         <div className="space-y-6">
-          {hasKakaoApiKey() ? (
-            <KakaoMap 
-              cats={enrichedCats}
-              onCatSelect={handleMapCatSelect}
-              className="w-full"
-            />
-          ) : (
+          <SimpleKakaoMap 
+            cats={enrichedCats}
+            onCatSelect={handleMapCatSelect}
+            className="w-full h-[600px]"
+          />
+          {false && (
             <div className="w-full h-[600px] bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl flex items-center justify-center border-2 border-dashed border-pink-300">
               <div className="text-center">
                 <div className="text-6xl mb-4">🗺️</div>
                 <h3 className="text-2xl font-bold text-pink-600 mb-3">
-                  지도 준비 중
+                  카카오맵 API 키 문제
                 </h3>
                 <p className="text-purple-500">
-                  카카오맵 API 설정 후 실제 지도를 볼 수 있어요<br />
+                  API 키에 401 인증 오류가 발생했습니다<br />
+                  카카오 개발자 콘솔에서 키와 도메인 설정을 확인해주세요<br />
                   지금은 아래 활동 패턴을 확인해보세요! 🐾
                 </p>
               </div>

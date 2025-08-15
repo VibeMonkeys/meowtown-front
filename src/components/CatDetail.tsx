@@ -57,7 +57,7 @@ interface CatDetailProps {
   onLike: (catId: string) => void;
   onComment: (catId: string) => void;
   onShare: (catId: string) => void;
-  onSightingReport?: (catId: string, info: string) => void;
+  onSightingReport?: (catId: string) => void;
 }
 
 export function CatDetail({ cat, sightingRecords = [], onBack, onLike, onComment, onShare, onSightingReport }: CatDetailProps) {
@@ -426,11 +426,7 @@ export function CatDetail({ cat, sightingRecords = [], onBack, onLike, onComment
               <Button 
                 className="btn-cute bg-gradient-to-r from-green-400 to-emerald-500 text-white w-full justify-center shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 py-3"
                 onClick={() => {
-                  const sightingInfo = prompt(`${cat.name}을(를) 목격하신 위치와 시간을 알려주세요:\n\n예시) 강남역 3번 출구, 오후 3시 🕒\n예시) 카페 앞 벤치, 아침 8시 ☀️`);
-                  if (sightingInfo && sightingInfo.trim()) {
-                    onSightingReport?.(cat.id, sightingInfo.trim());
-                    alert('목격 신고가 접수되었습니다! 🎉\n목격 이력에 추가되었습니다. 감사합니다! 💕');
-                  }
+                  onSightingReport?.(cat.id);
                 }}
               >
                 <Flag className="w-5 h-5 mr-2" />
