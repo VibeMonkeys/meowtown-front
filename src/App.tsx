@@ -56,39 +56,7 @@ const getStats = (catsCount: number) => ({
 // 초기 샘플 데이터 (실제 API에서 로드될 때까지 사용)
 // 커뮤니티 게시글은 API에서 로드
 
-// 샘플 알림 데이터
-const sampleNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'cat_registered',
-    title: '새 고양이 등록',
-    message: '치즈가 성공적으로 등록되었습니다.',
-    time: '30분 전',
-    isRead: false,
-    catName: '치즈',
-    userName: '김민수'
-  },
-  {
-    id: '2',
-    type: 'cat_liked',
-    title: '좋아요 알림',
-    message: '나비에게 새로운 좋아요가 있습니다.',
-    time: '1시간 전',
-    isRead: false,
-    catName: '나비',
-    userName: '정미선'
-  },
-  {
-    id: '3',
-    type: 'cat_sighted',
-    title: '고양이 목격',
-    message: '회돌이가 새로운 위치에서 목격되었습니다.',
-    time: '2시간 전',
-    isRead: true,
-    catName: '회돌이',
-    userName: '박영희'
-  }
-];
+// 알림 데이터는 서버에서 로드하거나 사용자 액션으로 생성됨
 
 interface SightingRecord {
   id: string;
@@ -122,7 +90,7 @@ function AppContent() {
   const [detailPost, setDetailPost] = useState<CommunityPost | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>(sampleNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [cats, setCats] = useState<Cat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -1035,7 +1003,35 @@ function AppContent() {
             </div>
 
             <div className="space-y-6">
-              {communityPosts.map((post) => (
+              {communityPosts.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="card-cute max-w-lg mx-auto p-12">
+                    <div className="text-8xl mb-6 animate-bounce">💬</div>
+                    <h3 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-4">
+                      아직 게시글이 없어요!
+                    </h3>
+                    <p className="text-pink-400 text-lg mb-8">우리 동네 첫 번째 고양이 소식을 전해주세요 💕</p>
+                    <Button 
+                      className="btn-cute btn-cute-primary text-lg px-8 py-3" 
+                      onClick={() => {
+                        if (!requireLogin('게시글 작성', () => setShowPostForm(true))) return;
+                        setShowPostForm(true);
+                      }}
+                    >
+                      <Plus className="w-5 h-5 mr-2" />
+                      첫 게시글 작성하기
+                      <span className="ml-2">✨</span>
+                    </Button>
+                    
+                    {/* Decorative elements */}
+                    <div className="absolute top-4 left-4 text-2xl text-pink-300 animate-pulse">🐾</div>
+                    <div className="absolute top-8 right-8 text-xl text-purple-300 animate-ping">💫</div>
+                    <div className="absolute bottom-6 left-8 text-lg text-yellow-300 animate-bounce">🌟</div>
+                    <div className="absolute bottom-4 right-4 text-2xl text-pink-300 animate-pulse">🐱</div>
+                  </div>
+                </div>
+              ) : (
+                communityPosts.map((post) => (
                 <div key={post.id} className="card-cute border-0 shadow-cute bg-gradient-to-br from-white to-pink-50">
                   <div className="p-6">
                     <div className="flex items-start gap-4">
@@ -1197,7 +1193,7 @@ function AppContent() {
                     </div>
                   )}
                 </div>
-              ))}
+              )))}
             </div>
           </div>
         );
