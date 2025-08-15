@@ -7,9 +7,14 @@ interface FloatingActionsProps {
   onAddCat?: () => void;
   onQuickLike?: () => void;
   onQuickMessage?: () => void;
+  disabled?: {
+    addCat?: boolean;
+    quickLike?: boolean;
+    quickMessage?: boolean;
+  };
 }
 
-export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: FloatingActionsProps) {
+export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage, disabled = {} }: FloatingActionsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
@@ -19,28 +24,32 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: Float
       label: '냥이 등록',
       onClick: onAddCat,
       color: 'from-pink-400 to-purple-500',
-      emoji: '🐱'
+      emoji: '🐱',
+      disabled: disabled.addCat
     },
     {
       icon: Heart,
       label: '좋아요',
       onClick: onQuickLike,
       color: 'from-red-400 to-pink-500',
-      emoji: '💕'
+      emoji: '💕',
+      disabled: disabled.quickLike
     },
     {
       icon: MessageSquare,
       label: '메시지',
       onClick: onQuickMessage,
       color: 'from-blue-400 to-purple-500',
-      emoji: '💬'
+      emoji: '💬',
+      disabled: disabled.quickMessage
     },
     {
       icon: Camera,
       label: '사진',
       onClick: () => {},
       color: 'from-green-400 to-blue-500',
-      emoji: '📸'
+      emoji: '📸',
+      disabled: false
     },
     {
       icon: theme === 'dark' ? Sun : Moon,
@@ -49,7 +58,8 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: Float
       color: theme === 'dark' 
         ? 'from-yellow-400 to-orange-500' 
         : 'from-indigo-500 to-purple-600',
-      emoji: theme === 'dark' ? '☀️' : '🌙'
+      emoji: theme === 'dark' ? '☀️' : '🌙',
+      disabled: false
     }
   ];
 
@@ -64,9 +74,14 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage }: Float
           return (
             <Button
               key={action.label}
-              onClick={action.onClick}
-              className={`relative w-14 h-14 rounded-full bg-gradient-to-r ${action.color} text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 group ${
+              onClick={action.disabled ? undefined : action.onClick}
+              disabled={action.disabled}
+              className={`relative w-14 h-14 rounded-full bg-gradient-to-r ${action.color} text-white shadow-lg transition-all duration-300 group ${
                 isOpen ? 'animate-slideInFromRight' : ''
+              } ${
+                action.disabled 
+                  ? 'opacity-50 cursor-not-allowed' 
+                  : 'hover:shadow-xl hover:scale-110'
               }`}
               style={{ 
                 animationDelay: isOpen ? `${index * 100}ms` : '0ms',

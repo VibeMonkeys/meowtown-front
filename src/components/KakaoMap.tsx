@@ -101,20 +101,41 @@ export function KakaoMap({ cats, onCatSelect, className = '' }: KakaoMapProps) {
           return;
         }
 
-        // 2단계: 객체 확인 및 재시도
+        // 2단계: 객체 확인 및 재시도 (개선된 로직)
         let retryCount = 0;
+        const maxRetries = 15; // 30에서 15로 줄임
+        
         const waitForKakao = () => {
           if (!isMounted) return;
           
-          if (window.kakao?.maps?.Map && mapContainer.current) {
-            console.log('🎯 카카오맵 객체 확인 완료, 지도 생성 시작...');
+          console.log(`🔄 카카오맵 객체 확인 중... (${retryCount + 1}/${maxRetries})`);
+          console.log('🔍 상태:', {
+            hasKakao: !!window.kakao,
+            hasMaps: !!window.kakao?.maps,
+            hasMap: !!window.kakao?.maps?.Map,
+            hasContainer: !!mapContainer.current,
+            containerReady: (mapContainer.current?.offsetWidth ?? 0) > 0
+          });
+          
+          if (window.kakao?.maps?.Map && mapContainer.current && (mapContainer.current.offsetWidth ?? 0) > 0) {
+            console.log('🎯 카카오맵 객체 및 컨테이너 확인 완료, 지도 생성 시작...');
             initMap();
-          } else if (retryCount < 30) {
+          } else if (retryCount < maxRetries) {
             retryCount++;
-            console.log(`⏳ 카카오맵 객체 대기 중... (${retryCount}/30)`);
-            setTimeout(waitForKakao, 200);
+            // 점진적으로 대기 시간 증가 (300ms, 450ms, 675ms, ...)
+            const delay = Math.min(300 * Math.pow(1.5, retryCount * 0.3), 1500);
+            console.log(`⏳ ${delay.toFixed(0)}ms 후 재시도...`);
+            setTimeout(waitForKakao, delay);
           } else {
             console.error('❌ 카카오맵 객체 대기 타임아웃');
+            console.log('🔍 최종 상태:', {
+              hasKakao: !!window.kakao,
+              hasMaps: !!window.kakao?.maps,
+              hasMap: !!window.kakao?.maps?.Map,
+              hasContainer: !!mapContainer.current,
+              containerSize: mapContainer.current ? 
+                `${mapContainer.current.offsetWidth}x${mapContainer.current.offsetHeight}` : 'none'
+            });
             if (isMounted) setIsLoading(false);
           }
         };

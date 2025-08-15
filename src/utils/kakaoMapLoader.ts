@@ -23,15 +23,34 @@ export const loadKakaoMap = (): Promise<boolean> => {
       return;
     }
 
+    // 네트워크 연결 상태 확인
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      console.error('❌ 인터넷 연결이 없습니다');
+      resolve(false);
+      return;
+    }
+
     console.log('🚀 카카오맵 최종 버전 로딩 시작...');
     console.log(`📋 API 키: ${KAKAO_API_KEY.substring(0, 10)}...`);
+    console.log('🌐 현재 도메인:', window.location.hostname);
+    console.log('🔗 전체 URL:', window.location.href);
 
-    // 기존 스크립트가 있다면 제거
-    const existingScripts = document.querySelectorAll('script[src*="dapi.kakao.com"]');
-    existingScripts.forEach((script, index) => {
-      console.log(`🗑️ 기존 스크립트 ${index + 1} 제거`);
-      script.remove();
-    });
+    // 기존 카카오맵 스크립트를 더 선택적으로 제거
+    const existingScripts = document.querySelectorAll('script[src*="dapi.kakao.com/v2/maps/sdk.js"]');
+    if (existingScripts.length > 0) {
+      console.log(`🗑️ 기존 카카오맵 SDK 스크립트 ${existingScripts.length}개 제거`);
+      existingScripts.forEach((script, index) => {
+        const scriptElement = script as HTMLScriptElement;
+        console.log(`   - 스크립트 ${index + 1}: ${scriptElement.src.substring(0, 80)}...`);
+        script.remove();
+      });
+      
+      // window.kakao 객체도 정리
+      if (window.kakao) {
+        console.log('🧹 기존 window.kakao 객체 정리');
+        delete window.kakao;
+      }
+    }
 
     // 매우 간단하고 직접적인 방법
     const script = document.createElement('script');
@@ -40,19 +59,44 @@ export const loadKakaoMap = (): Promise<boolean> => {
     script.onload = () => {
       console.log('📦 카카오맵 스크립트 로드 완료');
       
-      // 간단한 대기 후 확인
-      setTimeout(() => {
+      // 더 안전한 대기 시간과 재시도 로직
+      let retryCount = 0;
+      const maxRetries = 10;
+      
+      const checkKakaoReady = () => {
+        console.log(`🔄 카카오맵 준비 상태 확인 중... (${retryCount + 1}/${maxRetries})`);
+        console.log('🔍 디버깅 정보:', {
+          hasWindow: typeof window !== 'undefined',
+          hasKakao: !!window.kakao,
+          hasKakaoMaps: !!window.kakao?.maps,
+          hasMapConstructor: !!window.kakao?.maps?.Map,
+          currentDomain: window.location.hostname,
+          userAgent: navigator.userAgent.substring(0, 100) + '...'
+        });
+        
         if (window.kakao && window.kakao.maps && window.kakao.maps.Map) {
           console.log('🎯 카카오맵 API 사용 준비 완료!');
           console.log('📚 사용 가능한 객체들:', Object.keys(window.kakao.maps));
           resolve(true);
+        } else if (retryCount < maxRetries) {
+          retryCount++;
+          // 점진적으로 대기 시간 증가 (200ms, 300ms, 450ms, ...)
+          const delay = Math.min(200 * Math.pow(1.5, retryCount), 2000);
+          console.log(`⏳ ${delay}ms 후 재시도...`);
+          setTimeout(checkKakaoReady, delay);
         } else {
-          console.error('❌ 카카오맵 객체를 찾을 수 없음');
-          console.log('🔍 window.kakao:', !!window.kakao);
-          console.log('🔍 window.kakao.maps:', !!window.kakao?.maps);
+          console.error('❌ 카카오맵 로딩 타임아웃 - 최대 재시도 횟수 초과');
+          console.log('🔍 최종 상태:', {
+            hasKakao: !!window.kakao,
+            hasKakaoMaps: !!window.kakao?.maps,
+            hasMapConstructor: !!window.kakao?.maps?.Map
+          });
           resolve(false);
         }
-      }, 500);
+      };
+      
+      // 초기 대기 시간을 1초로 증가
+      setTimeout(checkKakaoReady, 1000);
     };
 
     script.onerror = (error) => {
