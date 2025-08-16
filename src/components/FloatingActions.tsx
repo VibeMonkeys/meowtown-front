@@ -1,20 +1,18 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
-import { Plus, Heart, MessageSquare, Camera, Sparkles, Moon, Sun } from 'lucide-react';
+import { Plus, MessageSquare, Sparkles, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface FloatingActionsProps {
   onAddCat?: () => void;
-  onQuickLike?: () => void;
   onQuickMessage?: () => void;
   disabled?: {
     addCat?: boolean;
-    quickLike?: boolean;
     quickMessage?: boolean;
   };
 }
 
-export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage, disabled = {} }: FloatingActionsProps) {
+export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: FloatingActionsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
@@ -28,28 +26,12 @@ export function FloatingActions({ onAddCat, onQuickLike, onQuickMessage, disable
       disabled: disabled.addCat
     },
     {
-      icon: Heart,
-      label: '좋아요',
-      onClick: onQuickLike,
-      color: 'from-red-400 to-pink-500',
-      emoji: '💕',
-      disabled: disabled.quickLike
-    },
-    {
       icon: MessageSquare,
-      label: '메시지',
+      label: '알림',
       onClick: onQuickMessage,
       color: 'from-blue-400 to-purple-500',
-      emoji: '💬',
+      emoji: '🔔',
       disabled: disabled.quickMessage
-    },
-    {
-      icon: Camera,
-      label: '사진',
-      onClick: () => {},
-      color: 'from-green-400 to-blue-500',
-      emoji: '📸',
-      disabled: false
     },
     {
       icon: theme === 'dark' ? Sun : Moon,

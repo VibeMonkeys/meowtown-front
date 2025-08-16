@@ -1495,18 +1495,11 @@ function AppContent() {
       {/* Floating Actions - 모든 화면에서 표시 */}
       <FloatingActions
         onAddCat={handleAddCatClick}
-        onQuickLike={() => {
-          if (cats.length > 0) {
-            handleCatLike(cats[0].id);
-          }
-        }}
         onQuickMessage={() => {
           setShowNotifications(true);
         }}
-        // 상세 화면에서는 고양이 추가 버튼만 비활성화
         disabled={{
           addCat: showAddForm,
-          quickLike: detailCat !== null,
           quickMessage: false
         }}
       />
