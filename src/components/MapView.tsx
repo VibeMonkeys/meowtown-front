@@ -80,6 +80,7 @@ const generateSightingRecords = (catId: string, catName: string): SightingRecord
 
 export function MapView({ cats, onCatSelect }: MapViewProps) {
   const [selectedCat, setSelectedCat] = useState<CatLocation | null>(null);
+  const [selectedCatIdForMap, setSelectedCatIdForMap] = useState<string | null>(null);
   const [sightingRecords, setSightingRecords] = useState<SightingRecord[]>([]);
   const [showRoute, setShowRoute] = useState(false);
   const [viewMode, setViewMode] = useState<'map' | 'timeline'>('map');
@@ -87,21 +88,27 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
   // 고양이에 임시 좌표와 성별 정보 추가
   const enrichedCats = cats.map((cat, index) => ({
     ...cat,
-    lat: cat.lat || (37.5665 + (Math.random() - 0.5) * 0.02), // 서울 시청 근처 랜덤 좌표
-    lng: cat.lng || (126.9780 + (Math.random() - 0.5) * 0.02),
+    lat: cat.lat || (37.4979 + (Math.random() - 0.5) * 0.02), // 서울 시청 근처 랜덤 좌표
+    lng: cat.lng || (127.0276 + (Math.random() - 0.5) * 0.02),
     gender: cat.gender || (['male', 'female', 'unknown'][Math.floor(Math.random() * 3)] as 'male' | 'female' | 'unknown')
   }));
 
-  const handleCatSelect = (cat: CatLocation) => {
+  const handleCatSelect = (cat: CatLocation, fromTimeline = false) => {
     setSelectedCat(cat);
+    setSelectedCatIdForMap(cat.id);
     setSightingRecords(generateSightingRecords(cat.id, cat.name));
     setShowRoute(false);
+    // 타임라인에서 클릭한 경우에만 지도로 전환하지 않음
+    if (!fromTimeline && viewMode !== 'map') {
+      setViewMode('map');
+    }
   };
 
   const handleMapCatSelect = (catId: string) => {
     const cat = enrichedCats.find(c => c.id === catId);
     if (cat) {
-      handleCatSelect(cat);
+      // 지도에서 클릭할 때는 모드 전환 없이 선택만 하고 상세 정보로 이동
+      handleCatSelect(cat, true); // fromTimeline = true로 전달
       setViewMode('timeline');
     }
     onCatSelect(catId);
@@ -163,53 +170,96 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
 
       {viewMode === 'map' ? (
         /* 실제 지도 뷰 */
-        <div className="space-y-6">
-          <SimpleKakaoMap 
-            cats={enrichedCats}
-            onCatSelect={handleMapCatSelect}
-            className="w-full h-[600px]"
-          />
-          {false && (
-            <div className="w-full h-[600px] bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl flex items-center justify-center border-2 border-dashed border-pink-300">
-              <div className="text-center">
-                <div className="text-6xl mb-4">🗺️</div>
-                <h3 className="text-2xl font-bold text-pink-600 mb-3">
-                  카카오맵 API 키 문제
-                </h3>
-                <p className="text-purple-500">
-                  API 키에 401 인증 오류가 발생했습니다<br />
-                  카카오 개발자 콘솔에서 키와 도메인 설정을 확인해주세요<br />
-                  지금은 아래 활동 패턴을 확인해보세요! 🐾
+        <div className="grid lg:grid-cols-4 gap-6">
+          {/* 고양이 리스트 */}
+          <div className="lg:col-span-1 space-y-4">
+            <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-pink-50 to-purple-50 p-4">
+              <h3 className="font-bold text-lg text-pink-600 mb-4 flex items-center gap-2">
+                <MapPin className="w-5 h-5" />
+                고양이 목록
+                <Badge className="bg-pink-500 text-white ml-auto">{enrichedCats.length}</Badge>
+              </h3>
+              
+              <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#ec4899 #fce7f3' }}>
+                {enrichedCats.map((cat) => (
+                  <div
+                    key={cat.id}
+                    onClick={() => {
+                      // 지도 모드에서는 지도에 위치만 표시하고 모드 전환 없음
+                      setSelectedCatIdForMap(cat.id);
+                      setSelectedCat(cat);
+                      setSightingRecords(generateSightingRecords(cat.id, cat.name));
+                    }}
+                    className={`card-cute p-3 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
+                      selectedCatIdForMap === cat.id 
+                        ? 'bg-gradient-to-r from-pink-100 to-purple-100 border-2 border-pink-300 animate-pulse' 
+                        : 'bg-white hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className={`text-2xl p-2 rounded-full ${
+                        cat.isNeutered ? 'bg-green-100' : 'bg-pink-100'
+                      }`}>🐱</div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-pink-700 truncate">{cat.name}</h4>
+                        <p className="text-xs text-purple-600 flex items-center gap-1 mt-1">
+                          <Clock className="w-3 h-3" />
+                          {cat.lastSeen}
+                        </p>
+                      </div>
+                      {selectedCatIdForMap === cat.id && (
+                        <div className="text-pink-500 animate-bounce">
+                          📍
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-4 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
+                <p className="text-xs text-center text-purple-600 font-medium">
+                  👉 고양이를 클릭하면 지도에서 위치를 확인할 수 있어요!
                 </p>
               </div>
             </div>
-          )}
+          </div>
           
-          {/* 지도 통계 */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="card-cute bg-gradient-to-r from-pink-50 to-pink-100 p-4 text-center">
-              <div className="text-2xl mb-2">🐱</div>
-              <div className="text-2xl font-bold text-pink-600">{enrichedCats.length}</div>
-              <div className="text-sm text-pink-500">등록된 고양이</div>
-            </div>
-            <div className="card-cute bg-gradient-to-r from-purple-50 to-purple-100 p-4 text-center">
-              <div className="text-2xl mb-2">✂️</div>
-              <div className="text-2xl font-bold text-purple-600">
-                {enrichedCats.filter(cat => cat.isNeutered).length}
+          {/* 지도 */}
+          <div className="lg:col-span-3 space-y-4">
+            <SimpleKakaoMap 
+              cats={enrichedCats}
+              onCatSelect={handleMapCatSelect}
+              selectedCatId={selectedCatIdForMap || undefined}
+              className="w-full h-[600px]"
+            />
+          
+            {/* 지도 통계 */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="card-cute bg-gradient-to-r from-pink-50 to-pink-100 p-4 text-center">
+                <div className="text-2xl mb-2">🐱</div>
+                <div className="text-2xl font-bold text-pink-600">{enrichedCats.length}</div>
+                <div className="text-sm text-pink-500">등록된 고양이</div>
               </div>
-              <div className="text-sm text-purple-500">중성화 완료</div>
-            </div>
-            <div className="card-cute bg-gradient-to-r from-green-50 to-green-100 p-4 text-center">
-              <div className="text-2xl mb-2">👁️</div>
-              <div className="text-2xl font-bold text-green-600">
-                {enrichedCats.reduce((sum, cat) => sum + cat.reportCount, 0)}
+              <div className="card-cute bg-gradient-to-r from-purple-50 to-purple-100 p-4 text-center">
+                <div className="text-2xl mb-2">✂️</div>
+                <div className="text-2xl font-bold text-purple-600">
+                  {enrichedCats.filter(cat => cat.isNeutered).length}
+                </div>
+                <div className="text-sm text-purple-500">중성화 완료</div>
               </div>
-              <div className="text-sm text-green-500">총 목격 횟수</div>
-            </div>
-            <div className="card-cute bg-gradient-to-r from-blue-50 to-blue-100 p-4 text-center">
-              <div className="text-2xl mb-2">📍</div>
-              <div className="text-2xl font-bold text-blue-600">5</div>
-              <div className="text-sm text-blue-500">활동 지역</div>
+              <div className="card-cute bg-gradient-to-r from-green-50 to-green-100 p-4 text-center">
+                <div className="text-2xl mb-2">👁️</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {enrichedCats.reduce((sum, cat) => sum + cat.reportCount, 0)}
+                </div>
+                <div className="text-sm text-green-500">총 목격 횟수</div>
+              </div>
+              <div className="card-cute bg-gradient-to-r from-blue-50 to-blue-100 p-4 text-center">
+                <div className="text-2xl mb-2">📍</div>
+                <div className="text-2xl font-bold text-blue-600">5</div>
+                <div className="text-sm text-blue-500">활동 지역</div>
+              </div>
             </div>
           </div>
         </div>
@@ -226,13 +276,13 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
             </h3>
             
             <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#ec4899 #fce7f3' }}>
-              {cats.map((cat) => (
+              {enrichedCats.map((cat) => (
                 <div
                   key={cat.id}
-                  onClick={() => handleCatSelect(cat)}
+                  onClick={() => handleCatSelect(cat, true)} // fromTimeline = true로 전달
                   className={`card-cute p-4 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
                     selectedCat?.id === cat.id 
-                      ? 'bg-gradient-to-r from-pink-100 to-purple-100 border-2 border-pink-300' 
+                      ? 'bg-gradient-to-r from-pink-100 to-purple-100 border-2 border-pink-300 ring-2 ring-pink-400 ring-offset-2' 
                       : 'bg-white hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50'
                   }`}
                 >
@@ -284,8 +334,8 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
               <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-white to-pink-50 p-6">
                 <div className="flex items-start gap-4">
                   <ImageWithFallback
-                    src={selectedCat.image}
-                    alt={selectedCat.name}
+                    src={selectedCat?.image}
+                    alt={selectedCat?.name || ''}
                     width={100}
                     height={100}
                     className="rounded-xl object-cover border-2 border-pink-200 shadow-md"
@@ -293,7 +343,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                   
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold text-pink-600 mb-2">
-                      {selectedCat.name}
+                      {selectedCat?.name}
                     </h3>
                     <p className="text-purple-600 mb-3">최근 활동 패턴 분석</p>
                     
@@ -318,7 +368,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                       </Button>
                       <Button 
                         className="btn-cute bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 hover:from-pink-200 hover:to-purple-200"
-                        onClick={() => onCatSelect(selectedCat.id)}
+                        onClick={() => selectedCat && onCatSelect(selectedCat.id)}
                       >
                         <Heart className="w-4 h-4 mr-2" />
                         상세 정보
