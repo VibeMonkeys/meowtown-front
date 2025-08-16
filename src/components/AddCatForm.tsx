@@ -111,9 +111,9 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
       <div className="absolute -top-6 right-8 text-purple-300 text-xl animate-bounce" style={{ animationDelay: '0.5s' }}>✨</div>
       <div className="absolute top-1/4 -right-6 text-yellow-300 text-lg animate-bounce" style={{ animationDelay: '1s' }}>🐾</div>
       
-      <Card className="card-cute overflow-hidden">
-        <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50 border-b border-pink-100">
-          <CardTitle className="flex items-center gap-3 text-pink-600">
+      <Card className="card-cute overflow-hidden bg-white dark:bg-gray-800">
+        <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/30 dark:to-purple-900/30 border-b border-pink-100 dark:border-pink-600">
+          <CardTitle className="flex items-center gap-3 text-pink-600 dark:text-pink-400">
             <div className="relative">
               <Camera className="w-6 h-6" />
               <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-yellow-400" />
@@ -124,13 +124,13 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
           </CardTitle>
         </CardHeader>
         
-        <CardContent className="bg-gradient-to-br from-white to-pink-25 p-6">
+        <CardContent className="bg-gradient-to-br from-white to-pink-25 dark:from-gray-800 dark:to-gray-700 p-6">
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* 사진 업로드 */}
             <div className="space-y-4">
-              <Label className="text-pink-600 font-semibold flex items-center gap-2">
+              <Label className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                 📸 사진 (최대 5장)
-                <span className="text-xs bg-pink-100 text-pink-500 px-2 py-1 rounded-full">필수</span>
+                <span className="text-xs bg-pink-100 dark:bg-pink-900/50 text-pink-500 dark:text-pink-400 px-2 py-1 rounded-full">필수</span>
               </Label>
               
               {/* 업로드된 이미지 미리보기 */}
@@ -138,7 +138,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
                 <div className="flex flex-wrap gap-3">
                   {formData.images.map((file, index) => (
                     <div key={index} className="relative group">
-                      <div className="relative overflow-hidden rounded-xl border-2 border-pink-200 shadow-md hover:shadow-lg transition-all duration-300">
+                      <div className="relative overflow-hidden rounded-xl border-2 border-pink-200 dark:border-pink-600 shadow-md hover:shadow-lg transition-all duration-300">
                         <img
                           src={URL.createObjectURL(file)}
                           alt={`Preview ${index + 1}`}
@@ -161,16 +161,16 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
               {/* 업로드 버튼 */}
               {formData.images.length < 5 && (
                 <div>
-                  <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-pink-300 rounded-xl cursor-pointer bg-gradient-to-br from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 transition-all duration-300 hover:scale-105 hover:shadow-lg group">
+                  <label className="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-pink-300 dark:border-pink-600 rounded-xl cursor-pointer bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 hover:from-pink-100 hover:to-purple-100 dark:hover:from-pink-800/30 dark:hover:to-purple-800/30 transition-all duration-300 hover:scale-105 hover:shadow-lg group">
                     <div className="flex flex-col items-center justify-center pt-6 pb-6">
                       <div className="relative mb-3">
-                        <Upload className="w-10 h-10 text-pink-400 group-hover:text-pink-500 transition-colors" />
+                        <Upload className="w-10 h-10 text-pink-400 dark:text-pink-300 group-hover:text-pink-500 dark:group-hover:text-pink-400 transition-colors" />
                         <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-300 rounded-full flex items-center justify-center animate-pulse">
                           <Sparkles className="w-2 h-2 text-yellow-600" />
                         </div>
                       </div>
-                      <p className="text-sm text-pink-600 font-medium mb-1">💕 사진을 선택하거나 드래그하세요</p>
-                      <p className="text-xs text-purple-500">귀여운 냥이의 모습을 보여주세요! 🐱</p>
+                      <p className="text-sm text-pink-600 dark:text-pink-400 font-medium mb-1">💕 사진을 선택하거나 드래그하세요</p>
+                      <p className="text-xs text-purple-500 dark:text-purple-400">귀여운 냥이의 모습을 보여주세요! 🐱</p>
                     </div>
                     <input
                       type="file"
@@ -187,9 +187,9 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
             {/* 기본 정보 */}
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <Label htmlFor="name" className="text-pink-600 font-semibold flex items-center gap-2">
+                <Label htmlFor="name" className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                   🏷️ 이름
-                  <span className="text-xs bg-red-100 text-red-500 px-2 py-1 rounded-full">필수</span>
+                  <span className="text-xs bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 px-2 py-1 rounded-full">필수</span>
                 </Label>
                 <Input
                   id="name"
@@ -202,7 +202,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
               </div>
 
               <div className="space-y-3">
-                <Label htmlFor="age" className="text-pink-600 font-semibold flex items-center gap-2">
+                <Label htmlFor="age" className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                   🎂 추정 나이
                 </Label>
                 <Input
@@ -217,7 +217,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
 
             {/* 성별 */}
             <div className="space-y-4">
-              <Label className="text-pink-600 font-semibold flex items-center gap-2">
+              <Label className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                 🚻 성별
               </Label>
               <RadioGroup 
@@ -227,21 +227,21 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
                 }
                 className="flex gap-4"
               >
-                <div className="flex items-center space-x-3 bg-blue-50 p-4 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-colors cursor-pointer min-h-[44px]">
-                  <RadioGroupItem value="male" id="male" className="text-blue-500" />
-                  <Label htmlFor="male" className="text-blue-600 font-medium cursor-pointer flex items-center gap-1">
+                <div className="flex items-center space-x-3 bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl border-2 border-blue-200 dark:border-blue-600 hover:border-blue-300 dark:hover:border-blue-500 transition-colors cursor-pointer min-h-[44px]">
+                  <RadioGroupItem value="male" id="male" className="text-blue-500 dark:text-blue-400" />
+                  <Label htmlFor="male" className="text-blue-600 dark:text-blue-400 font-medium cursor-pointer flex items-center gap-1">
                     ♂️ 수컷
                   </Label>
                 </div>
-                <div className="flex items-center space-x-3 bg-pink-50 p-4 rounded-xl border-2 border-pink-200 hover:border-pink-300 transition-colors cursor-pointer min-h-[44px]">
-                  <RadioGroupItem value="female" id="female" className="text-pink-500" />
-                  <Label htmlFor="female" className="text-pink-600 font-medium cursor-pointer flex items-center gap-1">
+                <div className="flex items-center space-x-3 bg-pink-50 dark:bg-pink-900/30 p-4 rounded-xl border-2 border-pink-200 dark:border-pink-600 hover:border-pink-300 dark:hover:border-pink-500 transition-colors cursor-pointer min-h-[44px]">
+                  <RadioGroupItem value="female" id="female" className="text-pink-500 dark:text-pink-400" />
+                  <Label htmlFor="female" className="text-pink-600 dark:text-pink-400 font-medium cursor-pointer flex items-center gap-1">
                     ♀️ 암컷
                   </Label>
                 </div>
-                <div className="flex items-center space-x-3 bg-gray-50 p-4 rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-colors cursor-pointer min-h-[44px]">
-                  <RadioGroupItem value="unknown" id="unknown" className="text-gray-500" />
-                  <Label htmlFor="unknown" className="text-gray-600 font-medium cursor-pointer flex items-center gap-1">
+                <div className="flex items-center space-x-3 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 transition-colors cursor-pointer min-h-[44px]">
+                  <RadioGroupItem value="unknown" id="unknown" className="text-gray-500 dark:text-gray-400" />
+                  <Label htmlFor="unknown" className="text-gray-600 dark:text-gray-400 font-medium cursor-pointer flex items-center gap-1">
                     ❓ 성별 미상
                   </Label>
                 </div>
@@ -249,13 +249,13 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
             </div>
 
             {/* 중성화 여부 */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-xl border border-green-200">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 p-4 rounded-xl border border-green-200 dark:border-green-600">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <Label className="text-green-600 font-semibold flex items-center gap-2">
+                  <Label className="text-green-600 dark:text-green-400 font-semibold flex items-center gap-2">
                     ✂️ 중성화 완료
                   </Label>
-                  <p className="text-sm text-green-500">TNR이나 수술 확인 시 체크해주세요 💚</p>
+                  <p className="text-sm text-green-500 dark:text-green-300">TNR이나 수술 확인 시 체크해주세요 💚</p>
                 </div>
                 <Switch
                   checked={formData.isNeutered}
@@ -267,9 +267,9 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
 
             {/* 발견 위치 */}
             <div className="space-y-3">
-              <Label htmlFor="location" className="text-pink-600 font-semibold flex items-center gap-2">
+              <Label htmlFor="location" className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                 📍 발견 위치
-                <span className="text-xs bg-red-100 text-red-500 px-2 py-1 rounded-full">필수</span>
+                <span className="text-xs bg-red-100 dark:bg-red-900/50 text-red-500 dark:text-red-400 px-2 py-1 rounded-full">필수</span>
               </Label>
               <Input
                 id="location"
@@ -283,7 +283,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
 
             {/* 설명 */}
             <div className="space-y-3">
-              <Label htmlFor="description" className="text-pink-600 font-semibold flex items-center gap-2">
+              <Label htmlFor="description" className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                 📝 특이사항 및 설명
               </Label>
               <Textarea
@@ -298,15 +298,15 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
 
             {/* 특징 태그 */}
             <div className="space-y-4">
-              <Label className="text-pink-600 font-semibold flex items-center gap-2">
+              <Label className="text-pink-600 dark:text-pink-400 font-semibold flex items-center gap-2">
                 🏷️ 특징 태그
-                <span className="text-xs text-purple-500">선택사항</span>
+                <span className="text-xs text-purple-500 dark:text-purple-400">선택사항</span>
               </Label>
               
               {/* 선택된 특징들 */}
               {formData.characteristics.length > 0 && (
-                <div className="bg-purple-50 p-4 rounded-xl border border-purple-200">
-                  <p className="text-sm text-purple-600 font-medium mb-3 flex items-center gap-1">
+                <div className="bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl border border-purple-200 dark:border-purple-600">
+                  <p className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-3 flex items-center gap-1">
                     ✨ 선택된 특징들
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -325,8 +325,8 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
               )}
 
               {/* 미리 정의된 특징들 */}
-              <div className="bg-pink-25 p-4 rounded-xl border border-pink-200">
-                <p className="text-sm text-pink-600 font-medium mb-3 flex items-center gap-1">
+              <div className="bg-pink-25 dark:bg-pink-900/20 p-4 rounded-xl border border-pink-200 dark:border-pink-600">
+                <p className="text-sm text-pink-600 dark:text-pink-400 font-medium mb-3 flex items-center gap-1">
                   🎨 추천 특징들 (클릭해서 추가하세요!)
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -335,7 +335,7 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
                     .map((char) => (
                       <Badge 
                         key={char} 
-                        className="bg-white border-2 border-pink-200 text-pink-600 cursor-pointer hover:bg-pink-100 hover:border-pink-300 transition-all duration-300 hover:scale-105 shadow-sm"
+                        className="bg-white dark:bg-gray-700 border-2 border-pink-200 dark:border-pink-600 text-pink-600 dark:text-pink-400 cursor-pointer hover:bg-pink-100 dark:hover:bg-pink-900/30 hover:border-pink-300 dark:hover:border-pink-500 transition-all duration-300 hover:scale-105 shadow-sm"
                         onClick={() => addCharacteristic(char)}
                       >
                         #{char}
@@ -347,8 +347,8 @@ export function AddCatForm({ onSubmit, onCancel, onFormDataChange }: AddCatFormP
               </div>
 
               {/* 커스텀 특징 추가 */}
-              <div className="bg-yellow-50 p-4 rounded-xl border border-yellow-200">
-                <p className="text-sm text-yellow-600 font-medium mb-3 flex items-center gap-1">
+              <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl border border-yellow-200 dark:border-yellow-600">
+                <p className="text-sm text-yellow-600 dark:text-yellow-400 font-medium mb-3 flex items-center gap-1">
                   ✏️ 나만의 특징 추가하기
                 </p>
                 <div className="flex gap-3">
