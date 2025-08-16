@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MeowTown - 실시간 고양이 지도 테스트</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+        #map {
+            width: 100%;
+            height: 600px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #f6f8fb 0%, #e9ecef 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #764ba2;
+        }
+        .stat-card .label {
+            color: #666;
+            margin-top: 5px;
+        }
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+        .legend-marker {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .status.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .location-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #667eea;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+        .location-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .location-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐾 MeowTown 실시간 고양이 지도</h1>
+        <p class="subtitle">우리 동네 고양이들의 실시간 위치를 확인해보세요!</p>
+        
+        <div class="controls">
+            <button class="btn" onclick="loadCats()">🔄 고양이 위치 새로고침</button>
+            <button class="btn" onclick="getCurrentLocation()">📍 내 위치로 이동</button>
+            <button class="btn" onclick="toggleAutoRefresh()">⏱️ 자동 새로고침: <span id="autoStatus">ON</span></button>
+            <button class="btn" onclick="addTestCat()">➕ 테스트 고양이 추가</button>
+        </div>
+        
+        <div id="status" class="status loading">지도를 초기화하는 중...</div>
+        
+        <div style="position: relative;">
+            <div id="map"></div>
+            <button class="location-btn" onclick="getCurrentLocation()" title="현재 위치로 이동">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 11l19-9-9 19-2-8-8-2z"/>
+                </svg>
+            </button>
+            <div class="legend">
+                <strong>범례</strong>
+                <div class="legend-item">
+                    <div class="legend-marker" style="background: #ef4444;"></div>
+                    <span>일반 고양이</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker" style="background: #fbbf24;"></div>
+                    <span>중성화 완료</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-marker" style="background: #3b82f6;"></div>
+                    <span>내 위치</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number" id="totalCats">0</div>
+                <div class="label">총 고양이 수</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="neuteredCats">0</div>
+                <div class="label">중성화 완료</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="lastUpdate">-</div>
+                <div class="label">마지막 업데이트</div>
+            </div>
+            <div class="stat-card">
+                <div class="number" id="nearbyCount">0</div>
+                <div class="label">1km 내 고양이</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=27bf445cdf2df64c348eca4e0ddbbdf7"></script>
+    <script>
+        let map;
+        let markers = [];
+        let currentLocationMarker = null;
+        let currentPosition = null;
+        let autoRefreshInterval = null;
+        let cats = [];
+        let infowindow = null;
+
+        // 지도 초기화
+        function initMap() {
+            const mapContainer = document.getElementById('map');
+            const mapOption = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780),
+                level: 4
+            };
+
+            map = new kakao.maps.Map(mapContainer, mapOption);
+            infowindow = new kakao.maps.InfoWindow({zIndex: 1});
+            
+            updateStatus('지도가 로드되었습니다!', 'success');
+            
+            // 초기 데이터 로드
+            loadCats();
+            getCurrentLocation();
+            
+            // 자동 새로고침 시작
+            startAutoRefresh();
+        }
+
+        // 백엔드에서 고양이 데이터 가져오기
+        async function loadCats() {
+            try {
+                const response = await fetch('http://localhost:8080/api/cats');
+                const data = await response.json();
+                
+                if (data.success && data.data) {
+                    cats = data.data;
+                    updateMarkers();
+                    updateStats();
+                    updateStatus(`${cats.length}마리의 고양이를 발견했습니다!`, 'success');
+                }
+            } catch (error) {
+                console.error('고양이 데이터 로드 실패:', error);
+                updateStatus('고양이 데이터를 가져올 수 없습니다.', 'error');
+            }
+        }
+
+        // 마커 업데이트
+        function updateMarkers() {
+            // 기존 마커 제거
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            // 새 마커 추가
+            cats.forEach(cat => {
+                const position = new kakao.maps.LatLng(cat.lat, cat.lng);
+                
+                // 마커 이미지 설정
+                let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png';
+                if (cat.isNeutered) {
+                    imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+                }
+                const imageSize = new kakao.maps.Size(24, 35);
+                const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+                
+                const marker = new kakao.maps.Marker({
+                    position: position,
+                    image: markerImage,
+                    title: cat.name
+                });
+
+                marker.setMap(map);
+                markers.push(marker);
+
+                // 마커 클릭 이벤트
+                kakao.maps.event.addListener(marker, 'click', function() {
+                    const content = `
+                        <div style="padding:10px;min-width:200px;">
+                            <h3 style="margin:0 0 5px 0;">${cat.name}</h3>
+                            <p style="margin:5px 0;font-size:12px;">최근 목격: ${cat.lastSeen}</p>
+                            <p style="margin:5px 0;font-size:12px;">목격 횟수: ${cat.reportCount}회</p>
+                            ${cat.isNeutered ? '<span style="background:#10b981;color:white;padding:2px 6px;border-radius:4px;font-size:11px;">중성화 완료</span>' : ''}
+                        </div>
+                    `;
+                    infowindow.setContent(content);
+                    infowindow.open(map, marker);
+                });
+            });
+        }
+
+        // 현재 위치 가져오기
+        function getCurrentLocation() {
+            if (!navigator.geolocation) {
+                updateStatus('위치 서비스를 사용할 수 없습니다.', 'error');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    currentPosition = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    
+                    const moveLatLon = new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
+                    map.panTo(moveLatLon);
+                    
+                    updateCurrentLocationMarker();
+                    updateNearbyCount();
+                    updateStatus('현재 위치로 이동했습니다!', 'success');
+                },
+                (error) => {
+                    console.error('위치 정보 오류:', error);
+                    updateStatus('위치 정보를 가져올 수 없습니다.', 'error');
+                }
+            );
+        }
+
+        // 현재 위치 마커 업데이트
+        function updateCurrentLocationMarker() {
+            if (currentLocationMarker) {
+                currentLocationMarker.setMap(null);
+            }
+
+            const position = new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
+            
+            // 파란색 마커
+            const imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+            const imageSize = new kakao.maps.Size(24, 35);
+            const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+            currentLocationMarker = new kakao.maps.Marker({
+                position: position,
+                image: markerImage,
+                title: '현재 위치',
+                zIndex: 999
+            });
+
+            currentLocationMarker.setMap(map);
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('totalCats').textContent = cats.length;
+            document.getElementById('neuteredCats').textContent = cats.filter(cat => cat.isNeutered).length;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString('ko-KR');
+        }
+
+        // 주변 고양이 수 계산
+        function updateNearbyCount() {
+            if (!currentPosition) {
+                document.getElementById('nearbyCount').textContent = '-';
+                return;
+            }
+
+            let count = 0;
+            cats.forEach(cat => {
+                const distance = getDistance(currentPosition.lat, currentPosition.lng, cat.lat, cat.lng);
+                if (distance <= 1000) { // 1km 이내
+                    count++;
+                }
+            });
+            
+            document.getElementById('nearbyCount').textContent = count;
+        }
+
+        // 거리 계산 (미터 단위)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // 지구 반지름 (미터)
+            const φ1 = lat1 * Math.PI/180;
+            const φ2 = lat2 * Math.PI/180;
+            const Δφ = (lat2-lat1) * Math.PI/180;
+            const Δλ = (lon2-lon1) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                    Math.cos(φ1) * Math.cos(φ2) *
+                    Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+
+        // 자동 새로고침 토글
+        function toggleAutoRefresh() {
+            if (autoRefreshInterval) {
+                stopAutoRefresh();
+            } else {
+                startAutoRefresh();
+            }
+        }
+
+        // 자동 새로고침 시작
+        function startAutoRefresh() {
+            autoRefreshInterval = setInterval(loadCats, 5000); // 5초마다
+            document.getElementById('autoStatus').textContent = 'ON';
+        }
+
+        // 자동 새로고침 중지
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                document.getElementById('autoStatus').textContent = 'OFF';
+            }
+        }
+
+        // 테스트 고양이 추가
+        async function addTestCat() {
+            const randomLat = 37.5665 + (Math.random() - 0.5) * 0.02;
+            const randomLng = 126.9780 + (Math.random() - 0.5) * 0.02;
+            
+            const newCat = {
+                name: `테스트냥이${Date.now()}`,
+                location: '서울시 중구',
+                description: '테스트용 고양이입니다',
+                estimatedAge: '1-2년',
+                gender: ['male', 'female', 'unknown'][Math.floor(Math.random() * 3)],
+                isNeutered: Math.random() > 0.5,
+                lat: randomLat,
+                lng: randomLng,
+                characteristics: ['귀여움', '활발함']
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/cats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newCat)
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    updateStatus('새로운 고양이가 추가되었습니다!', 'success');
+                    loadCats();
+                } else {
+                    updateStatus('고양이 추가 실패: ' + data.message, 'error');
+                }
+            } catch (error) {
+                console.error('고양이 추가 오류:', error);
+                updateStatus('고양이 추가 중 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // 상태 메시지 업데이트
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    statusEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 페이지 로드 시 지도 초기화
+        window.onload = function() {
+            initMap();
+        };
+
+        // 페이지 언로드 시 자동 새로고침 중지
+        window.onbeforeunload = function() {
+            stopAutoRefresh();
+        };
+    </script>
+</body>
+</html>
