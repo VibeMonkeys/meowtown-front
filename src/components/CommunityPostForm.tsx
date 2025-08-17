@@ -59,13 +59,13 @@ export function CommunityPostForm({ onSubmit, onClose }: CommunityPostFormProps)
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[70] flex items-center justify-center p-4">
-      <Card className="card-cute border-2 border-pink-200 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50 border-b-2 border-pink-200">
+      <Card className="card-earthy w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <CardHeader className="border-b-2" style={{background: 'var(--gradient-warm)', borderColor: 'var(--primary-200)'}}>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent flex items-center gap-3">
+            <CardTitle className="text-2xl bg-clip-text text-transparent flex items-center gap-3" style={{background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
               <div className="relative">
-                <Plus className="w-6 h-6 text-pink-500" />
-                <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-yellow-400" />
+                <Plus className="w-6 h-6" style={{color: 'var(--primary-500)'}} />
+                <Sparkles className="w-3 h-3 absolute -top-1 -right-1" style={{color: 'var(--accent-400)'}} />
               </div>
               📝 게시글 작성
             </CardTitle>

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { CuteAlert, useCuteAlert } from './components/ui/CuteAlert';
 import { CuteInputDialog } from './components/ui/CuteInputDialog';
 import { CuteSkeleton } from './components/ui/CuteSkeleton';
+import './styles/colors.css';
 import { Header } from './components/Header';
 import { CatCard } from './components/CatCard';
 import { StatsSection } from './components/StatsSection';
@@ -84,6 +85,7 @@ export default function App() {
 function AppContent() {
   const { user: currentUser, isLoading: authLoading } = useAuth();
   const { alertProps, showSuccess, showError, showInfo } = useCuteAlert();
+  const { theme } = useTheme();
   const [currentView, setCurrentView] = useState('home');
   const [showAddForm, setShowAddForm] = useState(false);
   const [showPostForm, setShowPostForm] = useState(false);
@@ -977,14 +979,14 @@ function AppContent() {
           <div className="space-y-6">
             <div className="text-center mb-8">
               <div className="relative inline-block">
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+                <h2 className="text-4xl font-bold flex items-center gap-3" style={{color: theme === 'dark' ? '#86efac' : '#991b1b'}}>
                   <span className="text-5xl">📚</span>
                   냥이 도감
                   <span className="text-3xl">🐱</span>
                 </h2>
-                <p className="text-pink-400 mt-3 text-xl font-medium">우리 동네 모든 냥이들을 만나보세요 💕✨</p>
-                <div className="absolute -top-4 -right-12 text-yellow-400 text-3xl animate-bounce">✨</div>
-                <div className="absolute -bottom-2 -left-8 text-pink-400 text-2xl animate-pulse">💕</div>
+                <p className="mt-3 text-xl font-medium" style={{color: 'var(--text-primary-soft)'}}>우리 동네 모든 냥이들을 만나보세요 💕✨</p>
+                <div className="absolute -top-4 -right-12 text-3xl animate-bounce" style={{color: 'var(--accent-400)'}}>✨</div>
+                <div className="absolute -bottom-2 -left-8 text-2xl animate-pulse" style={{color: 'var(--primary-400)'}}>💕</div>
               </div>
             </div>
 
@@ -996,8 +998,8 @@ function AppContent() {
               <div className="text-center py-16">
                 <div className="card-cute max-w-md mx-auto p-8">
                   <div className="text-6xl mb-4">😿</div>
-                  <h3 className="text-xl font-bold text-gray-700 mb-2">앗, 문제가 발생했어요!</h3>
-                  <p className="text-pink-500 mb-6">{error}</p>
+                  <h3 className="text-xl font-bold mb-2" style={{color: 'var(--text-primary-soft)'}}>앗, 문제가 발생했어요!</h3>
+                  <p className="mb-6" style={{color: 'var(--error)'}}>{error}</p>
                   <Button className="btn-cute btn-cute-primary" onClick={loadCats}>
                     <Sparkles className="w-4 h-4 mr-2" />
                     다시 시도하기
@@ -1025,7 +1027,7 @@ function AppContent() {
                   <h3 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-4">
                     아직 냥이가 없어요!
                   </h3>
-                  <p className="text-pink-400 text-lg mb-8">우리 동네 첫 번째 냥이를 등록해보세요 💕</p>
+                  <p className="text-lg mb-8" style={{color: 'var(--text-primary-soft)'}}>우리 동네 첫 번째 냥이를 등록해보세요 💕</p>
                   <Button 
                     className="btn-cute btn-cute-primary text-lg px-8 py-3" 
                     onClick={handleAddCatClick}
@@ -1051,14 +1053,14 @@ function AppContent() {
           <div className="space-y-6">
             <div className="text-center mb-8">
               <div className="relative inline-block">
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+                <h2 className="text-4xl font-bold flex items-center gap-3" style={{color: theme === 'dark' ? '#fda4af' : '#991b1b'}}>
                   <span className="text-5xl">💬</span>
                   커뮤니티
                   <span className="text-3xl">🐱</span>
                 </h2>
-                <p className="text-pink-400 mt-3 text-xl font-medium">이웃들과 고양이 소식을 공유하세요 💕✨</p>
-                <div className="absolute -top-4 -right-12 text-yellow-400 text-3xl animate-bounce">✨</div>
-                <div className="absolute -bottom-2 -left-8 text-pink-400 text-2xl animate-pulse">💕</div>
+                <p className="mt-3 text-xl font-medium" style={{color: 'var(--text-primary-soft)'}}>이웃들과 고양이 소식을 공유하세요 💕✨</p>
+                <div className="absolute -top-4 -right-12 text-3xl animate-bounce" style={{color: 'var(--accent-400)'}}>✨</div>
+                <div className="absolute -bottom-2 -left-8 text-2xl animate-pulse" style={{color: 'var(--primary-400)'}}>💕</div>
               </div>
               <div className="mt-6">
                 <Button className="btn-cute btn-cute-primary text-lg px-8 py-3" onClick={() => {
@@ -1077,7 +1079,7 @@ function AppContent() {
                 <div className="text-center py-16">
                   <div className="card-cute max-w-lg mx-auto p-12">
                     <div className="text-8xl mb-6 animate-bounce">💬</div>
-                    <h3 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-4">
+                    <h3 className="text-2xl font-bold bg-clip-text text-transparent mb-4" style={{background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
                       아직 게시글이 없어요!
                     </h3>
                     <p className="text-pink-400 text-lg mb-8">우리 동네 첫 번째 고양이 소식을 전해주세요 💕</p>
@@ -1281,10 +1283,10 @@ function AppContent() {
                 <div className="absolute -bottom-2 -left-2 text-2xl animate-ping">✨</div>
               </div>
               <div>
-                <h1 className="text-5xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600 bg-clip-text text-transparent mb-3">
+                <h1 className="text-5xl font-bold mb-3" style={{color: theme === 'dark' ? '#fde68a' : '#991b1b'}}>
                   우리동네 냥이도감
                 </h1>
-                <p className="text-xl text-pink-400 font-medium">
+                <p className="text-xl font-medium" style={{color: 'var(--text-primary-soft)'}}>
                   이웃과 함께 만드는 귀여운 길고양이 관찰 플랫폼 🐾💖
                 </p>
               </div>
@@ -1301,10 +1303,10 @@ function AppContent() {
             {/* Recent Cats */}
             <div className="card-cute bg-gradient-to-br from-white to-pink-25 p-8 space-y-6">
               <div className="text-center">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-2">
+                <h2 className="text-3xl font-bold mb-2" style={{color: theme === 'dark' ? '#86efac' : '#991b1b'}}>
                   🐾 최근 등록된 고양이들
                 </h2>
-                <p className="text-pink-600 dark:text-pink-300 text-lg">이웃들이 새로 발견한 귀여운 냥이들 😻✨</p>
+                <p className="text-lg" style={{color: 'var(--text-secondary-soft)'}}>이웃들이 새로 발견한 귀여운 냥이들 😻✨</p>
               </div>
 
               {loading ? (
@@ -1335,7 +1337,7 @@ function AppContent() {
                 <div className="text-center py-12">
                   <div className="card-cute max-w-md mx-auto p-8">
                     <div className="text-6xl mb-4 animate-bounce">😿</div>
-                    <p className="text-xl text-pink-500 font-semibold mb-4">아직 등록된 고양이가 없어요!</p>
+                    <p className="text-xl font-semibold mb-4" style={{color: 'var(--text-primary-soft)'}}>아직 등록된 고양이가 없어요!</p>
                     <Button className="btn-cute btn-cute-primary px-6 py-3" onClick={handleAddCatClick}>
                       <Plus className="w-5 h-5 mr-2" />
                       첫 번째 고양이 등록하기
@@ -1361,10 +1363,10 @@ function AppContent() {
             {/* Recent Community Activity */}
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent mb-2">
+                <h2 className="text-3xl font-bold mb-2" style={{color: theme === 'dark' ? '#fda4af' : '#991b1b'}}>
                   💬 최근 커뮤니티 소식
                 </h2>
-                <p className="text-pink-400 text-lg">이웃들의 최신 제보와 귀여운 소식들 🐱💕</p>
+                <p className="text-lg" style={{color: 'var(--text-secondary-soft)'}}>이웃들의 최신 제보와 귀여운 소식들 🐱💕</p>
               </div>
 
               <div className="space-y-4">

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { 
@@ -79,6 +80,7 @@ const generateSightingRecords = (catId: string, catName: string): SightingRecord
 };
 
 export function MapView({ cats, onCatSelect }: MapViewProps) {
+  const { theme } = useTheme();
   const [selectedCat, setSelectedCat] = useState<CatLocation | null>(null);
   const [selectedCatIdForMap, setSelectedCatIdForMap] = useState<string | null>(null);
   const [sightingRecords, setSightingRecords] = useState<SightingRecord[]>([]);
@@ -123,14 +125,14 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
       {/* Header */}
       <div className="text-center mb-8">
         <div className="relative inline-block">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+          <h2 className="text-4xl font-bold flex items-center gap-3" style={{color: theme === 'dark' ? '#fda4af' : '#991b1b'}}>
             <span className="text-5xl">🗺️</span>
             고양이 지도
             <span className="text-3xl">🐾</span>
           </h2>
-          <p className="text-pink-400 mt-3 text-xl font-medium">우리 동네 고양이들의 실시간 위치를 확인해보세요 💕✨</p>
+          <p className="mt-3 text-xl font-medium" style={{color: 'var(--text-primary-soft)'}}>우리 동네 고양이들의 실시간 위치를 확인해보세요 🌻🍃</p>
           <div className="absolute -top-4 -right-12 text-yellow-400 text-3xl animate-bounce">✨</div>
-          <div className="absolute -bottom-2 -left-8 text-pink-400 text-2xl animate-pulse">💕</div>
+          <div className="absolute -bottom-2 -left-8 text-2xl animate-pulse" style={{color: 'var(--primary-400)'}}>🐾</div>
         </div>
         
         {/* 뷰 모드 선택 */}
@@ -173,11 +175,11 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
         <div className="grid lg:grid-cols-4 gap-6">
           {/* 고양이 리스트 */}
           <div className="lg:col-span-1 space-y-4">
-            <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-pink-50 to-purple-50 p-4">
-              <h3 className="font-bold text-lg text-pink-600 mb-4 flex items-center gap-2">
+            <div className="card-earthy p-4" style={{background: 'var(--gradient-warm)'}}>
+              <h3 className="font-bold text-lg mb-4 flex items-center gap-2" style={{color: 'var(--text-primary-soft)'}}>
                 <MapPin className="w-5 h-5" />
                 고양이 목록
-                <Badge className="bg-pink-500 text-white ml-auto">{enrichedCats.length}</Badge>
+                <Badge className="ml-auto" style={{background: 'var(--gradient-primary)', color: 'white'}}>{enrichedCats.length}</Badge>
               </h3>
               
               <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#ec4899 #fce7f3' }}>
@@ -192,23 +194,23 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                     }}
                     className={`card-cute p-3 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
                       selectedCatIdForMap === cat.id 
-                        ? 'bg-gradient-to-r from-pink-100 to-purple-100 border-2 border-pink-300 animate-pulse' 
-                        : 'bg-white hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50'
+                        ? 'border-2 animate-pulse' 
+                        : 'bg-white hover:shadow-md'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <div className={`text-2xl p-2 rounded-full ${
-                        cat.isNeutered ? 'bg-green-100' : 'bg-pink-100'
+                        cat.isNeutered ? 'badge-earthy-secondary' : 'badge-earthy-accent'
                       }`}>🐱</div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-pink-700 truncate">{cat.name}</h4>
-                        <p className="text-xs text-purple-600 flex items-center gap-1 mt-1">
+                        <h4 className="font-bold truncate" style={{color: 'var(--text-primary-soft)'}}>{cat.name}</h4>
+                        <p className="text-xs flex items-center gap-1 mt-1" style={{color: 'var(--text-secondary-soft)'}}>
                           <Clock className="w-3 h-3" />
                           {cat.lastSeen}
                         </p>
                       </div>
                       {selectedCatIdForMap === cat.id && (
-                        <div className="text-pink-500 animate-bounce">
+                        <div className="animate-bounce" style={{color: 'var(--primary-500)'}}>
                           📍
                         </div>
                       )}
@@ -217,8 +219,8 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                 ))}
               </div>
               
-              <div className="mt-4 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
-                <p className="text-xs text-center text-purple-600 font-medium">
+              <div className="mt-4 p-3 rounded-lg" style={{background: 'var(--gradient-warm)'}}>
+                <p className="text-xs text-center font-medium" style={{color: 'var(--text-secondary-soft)'}}>
                   👉 고양이를 클릭하면 지도에서 위치를 확인할 수 있어요!
                 </p>
               </div>
@@ -236,29 +238,29 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
           
             {/* 지도 통계 */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="card-cute bg-gradient-to-r from-pink-50 to-pink-100 p-4 text-center">
+              <div className="card-earthy p-4 text-center" style={{background: 'var(--gradient-warm)'}}>
                 <div className="text-2xl mb-2">🐱</div>
-                <div className="text-2xl font-bold text-pink-600">{enrichedCats.length}</div>
-                <div className="text-sm text-pink-500">등록된 고양이</div>
+                <div className="text-2xl font-bold" style={{color: 'var(--text-primary-soft)'}}>{enrichedCats.length}</div>
+                <div className="text-sm" style={{color: 'var(--text-neutral-soft)'}}>등록된 고양이</div>
               </div>
-              <div className="card-cute bg-gradient-to-r from-purple-50 to-purple-100 p-4 text-center">
+              <div className="card-earthy p-4 text-center" style={{background: 'var(--gradient-nature)'}}>
                 <div className="text-2xl mb-2">✂️</div>
-                <div className="text-2xl font-bold text-purple-600">
+                <div className="text-2xl font-bold" style={{color: 'var(--text-secondary-soft)'}}>
                   {enrichedCats.filter(cat => cat.isNeutered).length}
                 </div>
-                <div className="text-sm text-purple-500">중성화 완료</div>
+                <div className="text-sm" style={{color: 'var(--text-secondary-soft)'}}>중성화 완료</div>
               </div>
-              <div className="card-cute bg-gradient-to-r from-green-50 to-green-100 p-4 text-center">
+              <div className="card-earthy p-4 text-center" style={{background: 'var(--gradient-secondary)'}}>
                 <div className="text-2xl mb-2">👁️</div>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold" style={{color: 'var(--text-secondary-soft)'}}>
                   {enrichedCats.reduce((sum, cat) => sum + cat.reportCount, 0)}
                 </div>
-                <div className="text-sm text-green-500">총 목격 횟수</div>
+                <div className="text-sm" style={{color: 'var(--text-secondary-soft)'}}>총 목격 횟수</div>
               </div>
-              <div className="card-cute bg-gradient-to-r from-blue-50 to-blue-100 p-4 text-center">
+              <div className="card-earthy p-4 text-center" style={{background: 'var(--gradient-warm)'}}>
                 <div className="text-2xl mb-2">📍</div>
-                <div className="text-2xl font-bold text-blue-600">5</div>
-                <div className="text-sm text-blue-500">활동 지역</div>
+                <div className="text-2xl font-bold" style={{color: 'var(--text-primary-soft)'}}>5</div>
+                <div className="text-sm" style={{color: 'var(--text-neutral-soft)'}}>활동 지역</div>
               </div>
             </div>
           </div>
@@ -268,23 +270,38 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
         <div className="grid lg:grid-cols-3 gap-6">
         {/* Cat List */}
         <div className="lg:col-span-1 space-y-4">
-          <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-pink-50 to-purple-50 p-4">
-            <h3 className="font-bold text-lg text-pink-600 mb-4 flex items-center gap-2">
+          <div className="card-earthy p-4" style={{background: 'var(--gradient-warm)'}}>
+            <h3 className="font-bold text-lg mb-4 flex items-center gap-2" style={{color: 'var(--text-primary-soft)'}}>
               <Activity className="w-5 h-5" />
               활동 중인 고양이들
-              <Badge className="bg-pink-500 text-white ml-auto">{cats.length}</Badge>
+              <Badge className="ml-auto" style={{background: 'var(--gradient-secondary)', color: 'white'}}>{cats.length}</Badge>
             </h3>
             
-            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#ec4899 #fce7f3' }}>
+            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--primary-400) var(--primary-100)' }}>
               {enrichedCats.map((cat) => (
                 <div
                   key={cat.id}
                   onClick={() => handleCatSelect(cat, true)} // fromTimeline = true로 전달
                   className={`card-cute p-4 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg ${
                     selectedCat?.id === cat.id 
-                      ? 'bg-gradient-to-r from-pink-100 to-purple-100 border-2 border-pink-300 ring-2 ring-pink-400 ring-offset-2' 
-                      : 'bg-white hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50'
+                      ? 'border-2 shadow-lg' 
+                      : 'bg-white'
                   }`}
+                  style={{
+                    background: selectedCat?.id === cat.id ? 'var(--gradient-warm)' : 'white',
+                    borderColor: selectedCat?.id === cat.id ? 'var(--primary-300)' : 'transparent',
+                    boxShadow: selectedCat?.id === cat.id ? '0 0 0 4px var(--primary-200)' : undefined
+                  }}
+                  onMouseEnter={(e) => {
+                    if (selectedCat?.id !== cat.id) {
+                      e.currentTarget.style.background = 'var(--primary-50)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (selectedCat?.id !== cat.id) {
+                      e.currentTarget.style.background = 'white';
+                    }
+                  }}
                 >
                   <div className="flex items-start gap-3">
                     <div className="relative">
@@ -293,7 +310,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                         alt={cat.name}
                         width={60}
                         height={60}
-                        className="rounded-full object-cover border-2 border-pink-200"
+                        className="rounded-full object-cover border-2" style={{borderColor: 'var(--primary-200)'}}
                       />
                       {cat.reportCount > 5 && (
                         <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
@@ -303,17 +320,17 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                     </div>
                     
                     <div className="flex-1">
-                      <h4 className="font-bold text-pink-700">{cat.name}</h4>
-                      <p className="text-xs text-purple-600 flex items-center gap-1 mt-1">
+                      <h4 className="font-bold" style={{color: 'var(--text-primary-soft)'}}>{cat.name}</h4>
+                      <p className="text-xs flex items-center gap-1 mt-1" style={{color: 'var(--text-secondary-soft)'}}>
                         <Clock className="w-3 h-3" />
                         {cat.lastSeen}
                       </p>
                       <div className="flex gap-2 mt-2">
-                        <Badge className="bg-pink-100 text-pink-600 text-xs">
+                        <Badge className="text-xs" style={{background: 'var(--primary-100)', color: 'var(--text-primary-soft)'}}>
                           목격 {cat.reportCount}회
                         </Badge>
                         {cat.isNeutered && (
-                          <Badge className="bg-green-100 text-green-600 text-xs">
+                          <Badge className="text-xs" style={{background: 'var(--secondary-100)', color: 'var(--text-secondary-soft)'}}>
                             중성화
                           </Badge>
                         )}
@@ -331,7 +348,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
           {selectedCat ? (
             <>
               {/* Selected Cat Info */}
-              <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-white to-pink-50 p-6">
+              <div className="card-earthy p-6" style={{background: 'var(--gradient-warm)'}}>
                 <div className="flex items-start gap-4">
                   <ImageWithFallback
                     src={selectedCat?.image}
@@ -342,19 +359,19 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                   />
                   
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-pink-600 mb-2">
+                    <h3 className="text-2xl font-bold mb-2" style={{color: 'var(--text-primary-soft)'}}>
                       {selectedCat?.name}
                     </h3>
-                    <p className="text-purple-600 mb-3">최근 활동 패턴 분석</p>
+                    <p className="mb-3" style={{color: 'var(--text-secondary-soft)'}}>최근 활동 패턴 분석</p>
                     
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="bg-pink-100 rounded-lg p-3">
-                        <p className="text-xs text-pink-500 mb-1">주요 활동 시간</p>
-                        <p className="font-bold text-pink-700">오전 7-9시</p>
+                      <div className="rounded-lg p-3" style={{background: 'var(--primary-100)'}}>
+                        <p className="text-xs mb-1" style={{color: 'var(--text-primary-soft)'}}>주요 활동 시간</p>
+                        <p className="font-bold" style={{color: 'var(--text-primary-soft)'}}>오전 7-9시</p>
                       </div>
-                      <div className="bg-purple-100 rounded-lg p-3">
-                        <p className="text-xs text-purple-500 mb-1">자주 목격되는 장소</p>
-                        <p className="font-bold text-purple-700">공원 입구</p>
+                      <div className="rounded-lg p-3" style={{background: 'var(--secondary-100)'}}>
+                        <p className="text-xs mb-1" style={{color: 'var(--text-secondary-soft)'}}>자주 목격되는 장소</p>
+                        <p className="font-bold" style={{color: 'var(--text-secondary-soft)'}}>공원 입구</p>
                       </div>
                     </div>
                     
@@ -367,7 +384,15 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                         이동 경로 보기
                       </Button>
                       <Button 
-                        className="btn-cute bg-gradient-to-r from-pink-100 to-purple-100 text-pink-600 hover:from-pink-200 hover:to-purple-200"
+                        className="btn-cute" style={{background: 'var(--gradient-secondary)', color: 'var(--text-secondary-soft)'}}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'var(--gradient-primary)';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'var(--gradient-secondary)';
+                          e.currentTarget.style.color = 'var(--text-secondary-soft)';
+                        }}
                         onClick={() => selectedCat && onCatSelect(selectedCat.id)}
                       >
                         <Heart className="w-4 h-4 mr-2" />
@@ -379,18 +404,18 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
               </div>
 
               {/* Movement Timeline */}
-              <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-white to-purple-50 p-6">
-                <h4 className="font-bold text-lg text-purple-600 mb-4 flex items-center gap-2">
+              <div className="card-earthy p-6" style={{background: 'var(--gradient-nature)'}}>
+                <h4 className="font-bold text-lg mb-4 flex items-center gap-2" style={{color: 'var(--text-secondary-soft)'}}>
                   <Calendar className="w-5 h-5" />
                   최근 목격 기록
-                  <Sparkles className="w-4 h-4 text-yellow-400 ml-auto animate-pulse" />
+                  <Sparkles className="w-4 h-4 ml-auto animate-pulse" style={{color: 'var(--accent-400)'}} />
                 </h4>
 
                 {showRoute && (
-                  <div className="mb-6 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl">
+                  <div className="mb-6 p-4 rounded-xl" style={{background: 'var(--gradient-warm)'}}>
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-semibold text-pink-600">이동 경로 시각화</span>
-                      <Badge className="bg-green-500 text-white">실시간</Badge>
+                      <span className="text-sm font-semibold" style={{color: 'var(--text-primary-soft)'}}>이동 경로 시각화</span>
+                      <Badge className="text-white" style={{background: 'var(--gradient-secondary)'}}>실시간</Badge>
                     </div>
                     <div className="relative h-32 bg-white rounded-lg overflow-hidden">
                       {/* 간단한 경로 시각화 */}
@@ -398,13 +423,13 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                         <div className="flex items-center gap-2">
                           {sightingRecords.slice(0, 5).map((record, idx) => (
                             <div key={record.id} className="relative">
-                              <div className={`w-8 h-8 rounded-full bg-gradient-to-r ${
-                                idx === 0 ? 'from-pink-400 to-pink-500' : 'from-purple-300 to-purple-400'
-                              } flex items-center justify-center shadow-md`}>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-md`} style={{
+                                background: idx === 0 ? 'var(--gradient-primary)' : 'var(--gradient-secondary)'
+                              }}>
                                 <MapPin className="w-4 h-4 text-white" />
                               </div>
                               {idx < 4 && (
-                                <div className="absolute top-4 left-8 w-12 h-0.5 bg-purple-300"></div>
+                                <div className="absolute top-4 left-8 w-12 h-0.5" style={{background: 'var(--secondary-300)'}}></div>
                               )}
                             </div>
                           ))}
@@ -414,32 +439,36 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                   </div>
                 )}
 
-                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#a855f7 #f3e8ff' }}>
+                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: 'var(--secondary-400) var(--secondary-100)' }}>
                   {sightingRecords.map((record, idx) => (
                     <div 
                       key={record.id}
-                      className="flex items-start gap-3 p-3 bg-white rounded-lg hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 transition-all duration-300"
+                      className="flex items-start gap-3 p-3 bg-white rounded-lg transition-all duration-300" 
+                      onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--primary-50)'; }} 
+                      onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; }}
                     >
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                         idx === 0 
-                          ? 'bg-gradient-to-r from-pink-400 to-pink-500 shadow-md' 
-                          : 'bg-gradient-to-r from-purple-200 to-purple-300'
-                      }`}>
-                        <MapPin className={`w-5 h-5 ${idx === 0 ? 'text-white' : 'text-purple-600'}`} />
+                          ? 'shadow-md' 
+                          : ''
+                      }`} style={{
+                        background: idx === 0 ? 'var(--gradient-primary)' : 'var(--gradient-secondary)'
+                      }}>
+                        <MapPin className="w-5 h-5 text-white" />
                       </div>
                       
                       <div className="flex-1">
                         <div className="flex items-center justify-between">
-                          <p className="font-semibold text-purple-700">{record.location}</p>
-                          <Badge className="bg-purple-100 text-purple-600 text-xs">
+                          <p className="font-semibold" style={{color: 'var(--text-secondary-soft)'}}>{record.location}</p>
+                          <Badge className="text-xs" style={{background: 'var(--secondary-100)', color: 'var(--text-secondary-soft)'}}>
                             {record.time}
                           </Badge>
                         </div>
-                        <p className="text-xs text-gray-600 mt-1">
+                        <p className="text-xs mt-1" style={{color: 'var(--text-neutral-soft)'}}>
                           {record.date} · {record.reporter}님이 목격
                         </p>
                         {record.notes && (
-                          <p className="text-xs text-green-600 mt-1 bg-green-50 inline-block px-2 py-1 rounded-full">
+                          <p className="text-xs mt-1 inline-block px-2 py-1 rounded-full" style={{color: 'var(--text-secondary-soft)', background: 'var(--secondary-50)'}}>
                             💚 {record.notes}
                           </p>
                         )}
@@ -448,20 +477,20 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                   ))}
                 </div>
 
-                <div className="mt-4 p-3 bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg">
-                  <p className="text-sm text-center text-purple-600 font-medium">
+                <div className="mt-4 p-3 rounded-lg" style={{background: 'var(--gradient-warm)'}}>
+                  <p className="text-sm text-center font-medium" style={{color: 'var(--text-secondary-soft)'}}>
                     📍 이 고양이는 주로 <span className="font-bold">공원 주변</span>에서 활동해요
                   </p>
                 </div>
               </div>
             </>
           ) : (
-            <div className="card-cute border-0 shadow-cute bg-gradient-to-br from-white to-pink-50 p-12 text-center">
+            <div className="card-earthy p-12 text-center" style={{background: 'var(--gradient-warm)'}}>
               <div className="text-6xl mb-4">🗺️</div>
-              <h3 className="text-2xl font-bold text-pink-600 mb-3">
+              <h3 className="text-2xl font-bold mb-3" style={{color: 'var(--text-primary-soft)'}}>
                 고양이를 선택해주세요
               </h3>
-              <p className="text-purple-500">
+              <p style={{color: 'var(--text-secondary-soft)'}}>
                 왼쪽 목록에서 고양이를 선택하면<br />
                 이동 경로와 활동 패턴을 확인할 수 있어요 🐾
               </p>

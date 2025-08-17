@@ -80,20 +80,20 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
             onClick={() => handleNavigationClick('home')}
           >
             <div className="relative">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 via-purple-400 to-pink-500 flex items-center justify-center shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-400 via-amber-400 to-orange-500 flex items-center justify-center shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-12" style={{background: 'var(--gradient-primary)'}}>
                 <span className="text-white text-2xl">🐱</span>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
+                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{background: 'var(--accent-400)'}}>
                   <span className="text-xs">✨</span>
                 </div>
               </div>
-              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-2 bg-pink-200 rounded-full opacity-30"></div>
+              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-2 rounded-full opacity-30" style={{background: 'var(--primary-200)'}}></div>
             </div>
             <div>
-              <h1 className="hidden sm:block font-bold text-xl bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="hidden sm:block font-bold text-xl bg-gradient-to-r bg-clip-text text-transparent" style={{background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
                 MeowTown
               </h1>
-              <p className="hidden sm:block text-xs text-pink-400 font-medium -mt-1">우리동네 냥이도감 💕</p>
-              <h1 className="sm:hidden font-bold text-lg bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+              <p className="hidden sm:block text-xs font-medium -mt-1" style={{color: 'var(--text-primary-soft)'}}>우리동네 냥이도감 🐾</p>
+              <h1 className="sm:hidden font-bold text-lg bg-gradient-to-r bg-clip-text text-transparent" style={{background: 'var(--gradient-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>
                 냥이도감
               </h1>
             </div>
@@ -116,7 +116,7 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
           <div className="flex items-center gap-3">
             {/* Add Cat Button */}
             <Button 
-              className="hidden sm:flex items-center gap-2 btn-cute btn-cute-primary h-11 px-6 font-medium shadow-lg hover:shadow-xl transform transition-all duration-300 hover:-translate-y-0.5"
+              className="hidden sm:flex items-center gap-2 btn-earthy-primary h-11 px-6 font-medium transform transition-all duration-300 hover:-translate-y-0.5"
               onClick={onAddCatClick}
             >
               <Plus className="w-4 h-4" />
@@ -128,13 +128,17 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
             <div className="relative">
               <Button 
                 variant="ghost" 
-                className="relative w-12 h-12 rounded-full bg-gradient-to-br from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 border-2 border-pink-200 hover:border-pink-300 transition-all duration-300 hover:scale-110"
+                className="relative w-12 h-12 rounded-full border-2 transition-all duration-300 hover:scale-110"
+                style={{
+                  background: 'var(--gradient-warm)',
+                  borderColor: 'var(--primary-200)',
+                }}
                 onClick={onNotificationClick}
               >
-                <Bell className="w-5 h-5 text-pink-500" />
+                <Bell className="w-5 h-5" style={{color: 'var(--primary-500)'}} />
               </Button>
               {notificationCount > 0 && (
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-r from-red-400 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg animate-pulse">
+                <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg animate-pulse" style={{background: 'var(--gradient-secondary)'}}>
                   {notificationCount > 9 ? '9+' : notificationCount}
                 </div>
               )}
@@ -143,23 +147,24 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
             {/* User Area */}
             {currentUser ? (
               <div className="relative group">
-                <Avatar className="w-12 h-12 border-3 border-pink-200 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer">
-                  <AvatarFallback className="bg-gradient-to-br from-pink-200 to-purple-200 text-pink-600 font-bold">
+                <Avatar className="w-12 h-12 border-3 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer" style={{borderColor: 'var(--primary-200)'}}>
+                  <AvatarFallback className="font-bold" style={{background: 'var(--gradient-warm)', color: 'var(--primary-600)'}}>
                     {currentUser.displayName.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white" style={{background: 'var(--secondary-400)'}}></div>
                 
                 {/* User Menu */}
-                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border-2 border-pink-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                  <div className="p-4 border-b border-pink-100">
-                    <p className="font-semibold text-pink-600">{currentUser.displayName}</p>
-                    <p className="text-xs text-purple-500">@{currentUser.userId}</p>
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50" style={{borderColor: 'var(--primary-200)'}}>
+                  <div className="p-4 border-b" style={{borderColor: 'var(--primary-100)'}}>
+                    <p className="font-semibold" style={{color: 'var(--primary-600)'}}>{currentUser.displayName}</p>
+                    <p className="text-xs" style={{color: 'var(--secondary-500)'}}>@{currentUser.userId}</p>
                   </div>
                   <div className="p-2">
                     <Button 
                       onClick={onLogout}
-                      className="w-full text-left btn-cute bg-gradient-to-r from-red-400 to-pink-500 text-white hover:from-red-500 hover:to-pink-600"
+                      className="w-full text-left btn-earthy-secondary hover:bg-red-50"
+                      style={{color: 'var(--error)'}}
                     >
                       🚪 로그아웃
                     </Button>
@@ -169,7 +174,7 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
             ) : (
               <Button 
                 onClick={onAuthClick}
-                className="btn-cute btn-cute-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
+                className="btn-earthy-primary transition-all duration-300 hover:scale-105 flex items-center gap-2"
               >
                 👤 로그인
                 <span className="ml-1">🐱</span>
@@ -204,7 +209,7 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:block border-t border-pink-100 bg-gradient-to-r from-pink-25 to-purple-25">
+      <nav className="hidden md:block border-t" style={{borderColor: 'var(--primary-100)', background: 'var(--gradient-warm)'}}>
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center space-x-1 h-16">
             {navigationItems.map((item, index) => {
@@ -218,9 +223,25 @@ export function Header({ currentView, onViewChange, notificationCount = 0, isAdd
                   onClick={() => handleNavigationClick(item.id)}
                   className={`relative flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 ${
                     isActive 
-                      ? 'bg-gradient-to-r from-pink-400 to-purple-500 text-white shadow-lg transform scale-105' 
-                      : 'text-pink-600 hover:text-pink-700 hover:bg-pink-50'
+                      ? 'text-white shadow-lg transform scale-105' 
+                      : 'hover:scale-105'
                   }`}
+                  style={isActive 
+                    ? {background: 'var(--gradient-primary)', color: 'white'} 
+                    : {color: 'var(--text-primary-soft)', backgroundColor: 'transparent'}
+                  }
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = 'var(--primary-50)';
+                      e.currentTarget.style.color = 'var(--text-primary-soft)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = 'var(--text-primary-soft)';
+                    }
+                  }}
                 >
                   <span className="text-lg">{emojis[index]}</span>
                   <span className="hidden lg:block">{item.label}</span>

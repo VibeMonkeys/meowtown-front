@@ -1,0 +1,322 @@
+/* MeowTown 따뜻한 어스톤 컬러 시스템 */
+
+:root {
+  /* Primary Colors - 오렌지 계열 */
+  --primary-50: #fef7ed;
+  --primary-100: #fdebd0;
+  --primary-200: #fbd4a0;
+  --primary-300: #f8b870;
+  --primary-400: #f59e0b;
+  --primary-500: #f97316;
+  --primary-600: #ea580c;
+  --primary-700: #c2410c;
+  --primary-800: #9a3412;
+  --primary-900: #7c2d12;
+  --primary-950: #431407;
+
+  /* Secondary Colors - 그린 계열 */
+  --secondary-50: #f0fdf4;
+  --secondary-100: #dcfce7;
+  --secondary-200: #bbf7d0;
+  --secondary-300: #86efac;
+  --secondary-400: #4ade80;
+  --secondary-500: #22c55e;
+  --secondary-600: #16a34a;
+  --secondary-700: #15803d;
+  --secondary-800: #166534;
+  --secondary-900: #14532d;
+  --secondary-950: #052e16;
+
+  /* Accent Colors - 옐로우 계열 */
+  --accent-50: #fefce8;
+  --accent-100: #fef9c3;
+  --accent-200: #fef08a;
+  --accent-300: #fde047;
+  --accent-400: #facc15;
+  --accent-500: #eab308;
+  --accent-600: #ca8a04;
+  --accent-700: #a16207;
+  --accent-800: #854d0e;
+  --accent-900: #713f12;
+  --accent-950: #422006;
+
+  /* Neutral Colors - 따뜻한 그레이 */
+  --neutral-50: #fafaf9;
+  --neutral-100: #f5f5f4;
+  --neutral-200: #e7e5e4;
+  --neutral-300: #d6d3d1;
+  --neutral-400: #a8a29e;
+  --neutral-500: #78716c;
+  --neutral-600: #57534e;
+  --neutral-700: #44403c;
+  --neutral-800: #292524;
+  --neutral-900: #1c1917;
+  --neutral-950: #0c0a09;
+
+  /* 텍스트 전용 색상 - 더 부드럽고 자연스러운 톤 */
+  --text-primary-soft: #8b5f3c;      /* 따뜻한 브라운 */
+  --text-secondary-soft: #5f8b3c;    /* 자연스러운 그린 */
+  --text-accent-soft: #8b8b3c;       /* 부드러운 옐로우 브라운 */
+  --text-neutral-soft: #6b7280;      /* 자연스러운 그레이 */
+  --text-neutral-light: #9ca3af;     /* 연한 그레이 */
+  
+  /* 다크모드 텍스트 색상 */
+  --text-primary-soft-dark: #fde68a;    /* 밝은 크림 옐로우 */
+  --text-secondary-soft-dark: #86efac;  /* 밝은 민트 */
+  --text-accent-soft-dark: #fda4af;     /* 밝은 로즈 */
+  --text-neutral-soft-dark: #f3f4f6;    /* 매우 밝은 그레이 */
+  --text-orange-light: #c2410c;         /* 라이트모드용 진한 오렌지 */
+
+  /* 다크모드 배경 및 텍스트 */
+  --bg-primary-light: var(--neutral-50);
+  --bg-primary-dark: var(--neutral-900);
+  --bg-secondary-light: #ffffff;
+  --bg-secondary-dark: var(--neutral-800);
+  
+  --text-primary-light: var(--neutral-800);
+  --text-primary-dark: var(--neutral-100);
+  --text-secondary-light: var(--text-neutral-soft);
+  --text-secondary-dark: var(--neutral-400);
+
+  /* 상태별 컬러 */
+  --success: var(--secondary-500);
+  --success-light: var(--secondary-50);
+  --warning: var(--accent-500);
+  --warning-light: var(--accent-50);
+  --error: #ef4444;
+  --error-light: #fef2f2;
+  --info: #3b82f6;
+  --info-light: #eff6ff;
+
+  /* 그라데이션 - 라이트모드 */
+  --gradient-primary: linear-gradient(135deg, #dc2626, #ea580c);  /* 레드-오렌지 - 더 진한 색상 */
+  --gradient-secondary: linear-gradient(135deg, #059669, #10b981);  /* 에메랄드 그린 - 더 진한 색상 */
+  --gradient-warm: linear-gradient(135deg, var(--primary-100), var(--accent-100));
+  --gradient-nature: linear-gradient(135deg, var(--secondary-100), var(--primary-100));
+  
+  /* 그라데이션 - 다크모드 */
+  --gradient-primary-dark: linear-gradient(135deg, #fbbf24, #fb7185);  /* 밝은 옐로우-핑크 */
+  --gradient-secondary-dark: linear-gradient(135deg, #4ade80, #22d3ee);  /* 밝은 그린-시안 */
+  --gradient-warm-dark: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(251, 113, 133, 0.2));
+  --gradient-nature-dark: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(34, 211, 238, 0.2));
+
+  /* 그림자 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* 따뜻한 컬러 그림자 */
+  --shadow-warm: 0 4px 6px -1px rgba(249, 115, 22, 0.1), 0 2px 4px -1px rgba(249, 115, 22, 0.06);
+  --shadow-nature: 0 4px 6px -1px rgba(34, 197, 94, 0.1), 0 2px 4px -1px rgba(34, 197, 94, 0.06);
+}
+
+/* 다크모드 오버라이드 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: var(--bg-primary-dark);
+    --bg-secondary: var(--bg-secondary-dark);
+    --text-primary: var(--text-primary-dark);
+    --text-secondary: var(--text-secondary-dark);
+    
+    /* 다크모드에서 텍스트 색상 변경 */
+    --text-primary-soft: var(--text-primary-soft-dark);
+    --text-secondary-soft: var(--text-secondary-soft-dark);
+    --text-accent-soft: var(--text-accent-soft-dark);
+    --text-neutral-soft: var(--text-neutral-soft-dark);
+    
+    /* 다크모드에서 그라데이션 변경 */
+    --gradient-primary: var(--gradient-primary-dark);
+    --gradient-secondary: var(--gradient-secondary-dark);
+    --gradient-warm: var(--gradient-warm-dark);
+    --gradient-nature: var(--gradient-nature-dark);
+  }
+}
+
+[data-theme="dark"] {
+  --bg-primary: var(--bg-primary-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  
+  /* 다크모드에서 텍스트 색상 변경 */
+  --text-primary-soft: var(--text-primary-soft-dark);
+  --text-secondary-soft: var(--text-secondary-soft-dark);
+  --text-accent-soft: var(--text-accent-soft-dark);
+  --text-neutral-soft: var(--text-neutral-soft-dark);
+  
+  /* 다크모드에서 그라데이션 변경 */
+  --gradient-primary: var(--gradient-primary-dark);
+  --gradient-secondary: var(--gradient-secondary-dark);
+  --gradient-warm: var(--gradient-warm-dark);
+  --gradient-nature: var(--gradient-nature-dark);
+}
+
+[data-theme="light"] {
+  --bg-primary: var(--bg-primary-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+}
+
+/* 유틸리티 클래스 */
+.bg-primary { background-color: var(--primary-500); }
+.bg-primary-light { background-color: var(--primary-100); }
+.bg-secondary { background-color: var(--secondary-500); }
+.bg-secondary-light { background-color: var(--secondary-100); }
+.bg-accent { background-color: var(--accent-500); }
+.bg-accent-light { background-color: var(--accent-100); }
+
+.text-primary { color: var(--primary-500); }
+.text-primary-dark { color: var(--primary-700); }
+.text-secondary { color: var(--secondary-500); }
+.text-secondary-dark { color: var(--secondary-700); }
+.text-accent { color: var(--accent-600); }
+
+.border-primary { border-color: var(--primary-200); }
+.border-secondary { border-color: var(--secondary-200); }
+.border-accent { border-color: var(--accent-200); }
+
+/* 새로운 버튼 스타일 */
+.btn-earthy-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-warm);
+}
+
+.btn-earthy-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-earthy-secondary {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-200);
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-earthy-secondary:hover {
+  background: var(--primary-200);
+  border-color: var(--primary-300);
+  transform: translateY(-1px);
+}
+
+.btn-earthy-success {
+  background: var(--gradient-secondary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-nature);
+}
+
+.btn-earthy-success:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* 카드 스타일 */
+.card-earthy {
+  background: white;
+  border: 1px solid var(--neutral-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+}
+
+.card-earthy:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.card-earthy-warm {
+  background: var(--gradient-warm);
+  border: 1px solid var(--primary-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-warm);
+}
+
+.card-earthy-nature {
+  background: var(--gradient-nature);
+  border: 1px solid var(--secondary-200);
+  border-radius: 16px;
+  box-shadow: var(--shadow-nature);
+}
+
+/* 뱃지 스타일 */
+.badge-earthy-primary {
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border: 1px solid var(--primary-200);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-earthy-secondary {
+  background: var(--secondary-100);
+  color: var(--secondary-700);
+  border: 1px solid var(--secondary-200);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.badge-earthy-accent {
+  background: var(--accent-100);
+  color: var(--accent-700);
+  border: 1px solid var(--accent-200);
+  border-radius: 9999px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+  .card-earthy {
+    background: var(--neutral-800);
+    border-color: var(--neutral-700);
+  }
+  
+  .card-earthy-warm {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(234, 179, 8, 0.1));
+    border-color: rgba(249, 115, 22, 0.2);
+  }
+  
+  .card-earthy-nature {
+    background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(249, 115, 22, 0.1));
+    border-color: rgba(34, 197, 94, 0.2);
+  }
+  
+}
+
+[data-theme="dark"] .card-earthy {
+  background: var(--neutral-800);
+  border-color: var(--neutral-700);
+}
+
+[data-theme="dark"] .card-earthy-warm {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(234, 179, 8, 0.1));
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+[data-theme="dark"] .card-earthy-nature {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(249, 115, 22, 0.1));
+  border-color: rgba(34, 197, 94, 0.2);
+}
+

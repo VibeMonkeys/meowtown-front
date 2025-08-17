@@ -21,7 +21,7 @@ export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: Flo
       icon: Plus,
       label: '냥이 등록',
       onClick: onAddCat,
-      color: 'from-pink-400 to-purple-500',
+      color: 'primary',
       emoji: '🐱',
       disabled: disabled.addCat
     },
@@ -29,7 +29,7 @@ export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: Flo
       icon: MessageSquare,
       label: '알림',
       onClick: onQuickMessage,
-      color: 'from-blue-400 to-purple-500',
+      color: 'secondary',
       emoji: '🔔',
       disabled: disabled.quickMessage
     },
@@ -37,9 +37,7 @@ export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: Flo
       icon: theme === 'dark' ? Sun : Moon,
       label: theme === 'dark' ? '라이트 모드' : '다크 모드',
       onClick: toggleTheme,
-      color: theme === 'dark' 
-        ? 'from-yellow-400 to-orange-500' 
-        : 'from-indigo-500 to-purple-600',
+      color: 'accent',
       emoji: theme === 'dark' ? '☀️' : '🌙',
       disabled: false
     }
@@ -58,16 +56,20 @@ export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: Flo
               key={action.label}
               onClick={action.disabled ? undefined : action.onClick}
               disabled={action.disabled}
-              className={`relative w-14 h-14 rounded-full bg-gradient-to-r ${action.color} text-white shadow-lg transition-all duration-300 group ${
+              className={`relative w-14 h-14 rounded-full text-white shadow-xl border-2 transition-all duration-300 group ${
                 isOpen ? 'animate-slideInFromRight' : ''
               } ${
                 action.disabled 
-                  ? 'opacity-50 cursor-not-allowed' 
-                  : 'hover:shadow-xl hover:scale-110'
+                  ? 'opacity-50 cursor-not-allowed border-gray-300' 
+                  : 'hover:shadow-xl hover:scale-110 border-white/50 hover:border-white/80'
               }`}
               style={{ 
                 animationDelay: isOpen ? `${index * 100}ms` : '0ms',
-                animationFillMode: 'both'
+                animationFillMode: 'both',
+                background: action.color === 'primary' ? 'linear-gradient(135deg, #dc2626, #ea580c)' : 
+                           action.color === 'secondary' ? 'linear-gradient(135deg, #059669, #10b981)' : 
+                           'linear-gradient(135deg, #7c3aed, #a855f7)',
+                boxShadow: '0 8px 16px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.15)'
               }}
             >
               <Icon className={`w-6 h-6 ${
@@ -78,12 +80,18 @@ export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: Flo
               }} />
               
               {/* Tooltip */}
-              <div className="absolute right-16 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-                <div className="bg-gray-800 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap flex items-center gap-2">
+              <div className="absolute right-16 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50">
+                <div className="px-3 py-2 rounded-lg text-sm whitespace-nowrap flex items-center gap-2 shadow-lg border-2" style={{
+                  background: 'var(--bg-secondary-light)',
+                  color: 'var(--text-primary-soft)',
+                  borderColor: 'var(--primary-200)'
+                }}>
                   {action.label}
                   <span>{action.emoji}</span>
                 </div>
-                <div className="absolute top-1/2 left-full transform -translate-y-1/2 border-l-4 border-l-gray-800 border-y-4 border-y-transparent"></div>
+                <div className="absolute top-1/2 left-full transform -translate-y-1/2 border-l-4 border-y-4 border-y-transparent" style={{
+                  borderLeftColor: 'var(--primary-200)'
+                }}></div>
               </div>
             </Button>
           );
@@ -93,23 +101,27 @@ export function FloatingActions({ onAddCat, onQuickMessage, disabled = {} }: Flo
       {/* Main Toggle Button */}
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative w-16 h-16 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-110 floating-glow ${
+        className={`relative w-16 h-16 rounded-full text-white shadow-2xl border-2 hover:shadow-2xl transition-all duration-300 hover:scale-110 floating-glow ${
           isOpen ? 'rotate-45' : ''
-        }`}
+        } ${isOpen ? 'border-white/80' : 'border-white/50'}`}
+        style={{
+          background: 'linear-gradient(135deg, #dc2626, #ea580c)',
+          boxShadow: '0 10px 20px rgba(0,0,0,0.25), 0 6px 10px rgba(0,0,0,0.2)'
+        }}
       >
         <Plus className="w-8 h-8" />
         
         {/* Sparkle Effects */}
-        <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center animate-pulse">
-          <Sparkles className="w-4 h-4 text-yellow-600" />
+        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center animate-pulse shadow-lg border border-white/80" style={{background: 'linear-gradient(135deg, #fbbf24, #f59e0b)'}}>
+          <Sparkles className="w-4 h-4 text-white" />
         </div>
         
         {/* Floating Hearts */}
         {!isOpen && (
           <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute -top-2 -left-2 text-pink-300 text-xs animate-bounce" style={{ animationDelay: '0s' }}>💕</div>
-            <div className="absolute -bottom-2 -right-2 text-purple-300 text-xs animate-bounce" style={{ animationDelay: '0.5s' }}>✨</div>
-            <div className="absolute -top-1 right-1 text-yellow-300 text-xs animate-bounce" style={{ animationDelay: '1s' }}>🌟</div>
+            <div className="absolute -top-2 -left-2 text-xs animate-bounce" style={{ animationDelay: '0s', color: 'var(--primary-300)' }}>🌻</div>
+            <div className="absolute -bottom-2 -right-2 text-xs animate-bounce" style={{ animationDelay: '0.5s', color: 'var(--secondary-300)' }}>🍃</div>
+            <div className="absolute -top-1 right-1 text-xs animate-bounce" style={{ animationDelay: '1s', color: 'var(--accent-300)' }}>🌱</div>
           </div>
         )}
       </Button>
