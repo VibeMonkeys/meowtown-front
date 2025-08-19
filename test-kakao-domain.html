@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>카카오맵 도메인 테스트</title>
+</head>
+<body>
+    <h1>카카오맵 도메인 테스트</h1>
+    <p>현재 도메인: <span id="domain"></span></p>
+    <p>카카오맵 로딩 상태: <span id="status"></span></p>
+    <div id="map" style="width:400px;height:300px;border:1px solid #ccc;"></div>
+
+    <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=27bf445cdf2df64c348eca4e0ddbbdf7"></script>
+    <script>
+        document.getElementById('domain').textContent = window.location.hostname;
+        
+        if (window.kakao && window.kakao.maps) {
+            document.getElementById('status').textContent = '✅ 로딩 성공';
+            document.getElementById('status').style.color = 'green';
+            
+            var container = document.getElementById('map');
+            var options = {
+                center: new kakao.maps.LatLng(37.5665, 126.9780),
+                level: 3
+            };
+            var map = new kakao.maps.Map(container, options);
+        } else {
+            document.getElementById('status').textContent = '❌ 로딩 실패 - 도메인 등록 필요';
+            document.getElementById('status').style.color = 'red';
+            document.getElementById('map').innerHTML = '<p style="color:red;padding:20px;">카카오 개발자 콘솔에서 현재 도메인을 등록해주세요</p>';
+        }
+    </script>
+</body>
+</html>

@@ -425,16 +425,52 @@ export function SimpleKakaoMap({ cats: propCats, onCatSelect, className = '', fe
       
       {/* 에러 오버레이 */}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-red-50 rounded-lg border border-red-200 z-10">
-          <div className="text-center text-red-600">
-            <div className="text-2xl mb-2">❌</div>
-            <div>지도 로드 실패: {error}</div>
-            <button 
-              onClick={() => window.location.reload()}
-              className="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              새로고침
-            </button>
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-50 rounded-lg border border-red-200 z-10">
+          <div className="text-center p-6 max-w-md">
+            <div className="text-4xl mb-4">🗺️❌</div>
+            <h3 className="text-lg font-bold text-red-700 mb-2">카카오맵 로드 실패</h3>
+            <p className="text-red-600 text-sm mb-4">{error}</p>
+            
+            <div className="text-xs text-gray-600 mb-4">
+              <p className="mb-1">🔍 가능한 해결책:</p>
+              <ul className="text-left list-disc list-inside space-y-1">
+                <li>브라우저 새로고침</li>
+                <li>광고 차단 프로그램 해제</li>
+                <li>네트워크 연결 확인</li>
+              </ul>
+            </div>
+            
+            <div className="flex gap-2 justify-center">
+              <button 
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+              >
+                🔄 새로고침
+              </button>
+              <button 
+                onClick={() => {
+                  setError(null);
+                  setIsLoading(true);
+                  // 재시도
+                  setTimeout(() => {
+                    const initMap = async () => {
+                      try {
+                        const loaded = await loadKakaoMap();
+                        if (!loaded) throw new Error('카카오맵 API 로드 실패');
+                        setIsLoading(false);
+                      } catch (err) {
+                        setError(err instanceof Error ? err.message : '알 수 없는 오류');
+                        setIsLoading(false);
+                      }
+                    };
+                    initMap();
+                  }, 100);
+                }}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+              >
+                🔄 재시도
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -154,24 +154,80 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
         </div>
       </div>
 
-      {/* 카카오맵이 없을 때 알림 */}
-      {!hasKakaoApiKey() && (
-        <div className="card-cute bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-300 p-6 mb-6">
-          <div className="flex items-center gap-3">
-            <AlertCircle className="w-6 h-6 text-yellow-600" />
-            <div>
-              <h3 className="font-bold text-yellow-700">지도 API 키 설정 필요</h3>
-              <p className="text-yellow-600 text-sm mt-1">
-                카카오맵을 사용하려면 .env 파일에 REACT_APP_KAKAO_API_KEY를 설정해주세요.
-                <br />현재는 활동 패턴만 확인하실 수 있습니다.
-              </p>
+      {/* 카카오맵 상태 정보 */}
+      {(() => {
+        const hasKey = hasKakaoApiKey();
+        const apiKey = process.env.REACT_APP_KAKAO_API_KEY;
+        
+        return (
+          <div className={`card-cute border-2 p-4 mb-6 ${hasKey ? 'bg-green-50 border-green-300' : 'bg-yellow-50 border-yellow-300'}`}>
+            <div className="flex items-start gap-3">
+              <AlertCircle className={`w-6 h-6 ${hasKey ? 'text-green-600' : 'text-yellow-600'}`} />
+              <div className="flex-1">
+                <h3 className={`font-bold ${hasKey ? 'text-green-700' : 'text-yellow-700'}`}>
+                  {hasKey ? '카카오맵 API 설정됨' : '카카오맵 API 키 설정 필요'}
+                </h3>
+                
+                <div className={`text-sm mt-1 space-y-1 ${hasKey ? 'text-green-600' : 'text-yellow-600'}`}>
+                  <p>
+                    <strong>환경변수:</strong> {apiKey ? `${apiKey.substring(0, 4)}****` : '없음'}
+                  </p>
+                  <p>
+                    <strong>현재 도메인:</strong> {window.location.hostname}
+                  </p>
+                  <p>
+                    <strong>현재 URL:</strong> {window.location.href}
+                  </p>
+                  
+                  {!hasKey && (
+                    <p className="mt-2">
+                      ⚠️ 카카오맵을 사용하려면 환경변수를 설정해주세요.<br />
+                      현재는 활동 패턴만 확인하실 수 있습니다.
+                    </p>
+                  )}
+                  
+                  {hasKey && (
+                    <p className="mt-2">
+                      ✅ API 키가 설정되었습니다. 지도가 로드되지 않으면 카카오 개발자 콘솔에서 현재 도메인 등록을 확인해주세요.
+                    </p>
+                  )}
+                </div>
+                
+                <details className="mt-3">
+                  <summary className={`text-xs cursor-pointer ${hasKey ? 'text-green-500' : 'text-yellow-500'}`}>
+                    🔧 디버깅 정보 (클릭하여 펼치기)
+                  </summary>
+                  <div className={`mt-2 p-3 rounded text-xs font-mono ${hasKey ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                    <p>window.kakao 존재: {!!window.kakao ? '✅ 예' : '❌ 아니오'}</p>
+                    <p>window.kakao.maps 존재: {!!(window.kakao && window.kakao.maps) ? '✅ 예' : '❌ 아니오'}</p>
+                    <p>window.kakao.maps.Map 존재: {!!(window.kakao && window.kakao.maps && window.kakao.maps.Map) ? '✅ 예' : '❌ 아니오'}</p>
+                    <p>User Agent: {navigator.userAgent}</p>
+                  </div>
+                </details>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {viewMode === 'map' ? (
-        /* 실제 지도 뷰 */
+        /* 실제 지도 뷰 - API 키가 있을 때만 표시 */
+        !hasKakaoApiKey() ? (
+          <div className="card-cute p-12 text-center bg-gradient-to-br from-blue-50 to-indigo-50">
+            <div className="text-6xl mb-4">🗺️</div>
+            <h3 className="text-2xl font-bold text-blue-700 mb-3">지도 기능 준비중</h3>
+            <p className="text-blue-600 mb-6">
+              보안상의 이유로 지도 기능은 현재 비활성화되어 있습니다.<br />
+              고양이들의 활동 패턴은 아래 '활동 패턴' 탭에서 확인하실 수 있어요! 🐱
+            </p>
+            <button 
+              onClick={() => setViewMode('timeline')}
+              className="btn-cute btn-cute-primary"
+            >
+              📊 활동 패턴 보기
+            </button>
+          </div>
+        ) : (
         <div className="grid lg:grid-cols-4 gap-6">
           {/* 고양이 리스트 */}
           <div className="lg:col-span-1 space-y-4">
@@ -265,6 +321,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
             </div>
           </div>
         </div>
+        )
       ) : (
         /* 기존 타임라인 뷰 */
         <div className="grid lg:grid-cols-3 gap-6">
@@ -291,7 +348,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
                     background: selectedCat?.id === cat.id ? 'var(--gradient-warm)' : 'white',
                     borderColor: selectedCat?.id === cat.id ? 'var(--primary-300)' : 'transparent',
                     boxShadow: selectedCat?.id === cat.id ? '0 0 0 4px var(--primary-200)' : undefined
-                  }}
+                  } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     if (selectedCat?.id !== cat.id) {
                       e.currentTarget.style.background = 'var(--primary-50)';

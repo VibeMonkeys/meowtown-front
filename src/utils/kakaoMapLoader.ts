@@ -7,8 +7,8 @@ declare global {
   }
 }
 
-// API 키 직접 설정
-const KAKAO_API_KEY = '27bf445cdf2df64c348eca4e0ddbbdf7';
+// API 키를 환경변수에서 가져오기
+const KAKAO_API_KEY = process.env.REACT_APP_KAKAO_API_KEY || '27bf445cdf2df64c348eca4e0ddbbdf7';
 
 /**
  * 카카오맵 API를 로드합니다 (단순하고 확실한 방식)
@@ -16,6 +16,14 @@ const KAKAO_API_KEY = '27bf445cdf2df64c348eca4e0ddbbdf7';
  */
 export const loadKakaoMap = (): Promise<boolean> => {
   return new Promise((resolve) => {
+    // API 키가 없는 경우
+    if (!KAKAO_API_KEY) {
+      console.error('❌ 카카오맵 API 키가 설정되지 않았습니다.');
+      console.error('💡 .env 파일에 REACT_APP_KAKAO_API_KEY를 설정하거나, 배포 환경에서 환경변수를 설정해주세요.');
+      resolve(false);
+      return;
+    }
+
     // 이미 완전히 로드된 경우
     if (window.kakao?.maps?.Map && typeof window.kakao.maps.Map === 'function') {
       console.log('✅ 카카오맵 이미 로드됨');
@@ -24,7 +32,8 @@ export const loadKakaoMap = (): Promise<boolean> => {
     }
 
     console.log('🚀 카카오맵 로딩 시작...');
-    console.log(`📋 API 키: ${KAKAO_API_KEY}`);
+    console.log(`📋 API 키 앞 4자리: ${KAKAO_API_KEY.substring(0, 4)}****`);
+    console.log(`🌐 현재 도메인: ${window.location.hostname}`);
 
     // 기존 스크립트 제거
     const existingScripts = document.querySelectorAll('script[src*="dapi.kakao.com"]');
@@ -41,7 +50,7 @@ export const loadKakaoMap = (): Promise<boolean> => {
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_API_KEY}&autoload=false&libraries=services,clusterer`;
     
     let checkCount = 0;
-    const maxChecks = 50; // 5초간 체크
+    const maxChecks = 100; // 10초간 체크 (더 길게)
     
     script.onload = () => {
       console.log('📦 카카오맵 스크립트 로드 완료');
@@ -90,6 +99,11 @@ export const loadKakaoMap = (): Promise<boolean> => {
 
     script.onerror = (error) => {
       console.error('❌ 카카오맵 스크립트 로드 실패:', error);
+      console.error('🔍 가능한 원인:');
+      console.error('  1. 카카오 개발자 콘솔에서 현재 도메인이 등록되지 않음');
+      console.error('  2. API 키가 유효하지 않음');
+      console.error('  3. 네트워크 연결 문제');
+      console.error(`🌐 현재 URL: ${window.location.href}`);
       resolve(false);
     };
 
