@@ -154,8 +154,8 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
         </div>
       </div>
 
-      {/* 카카오맵 상태 정보 */}
-      {(() => {
+      {/* 개발 환경에서만 카카오맵 상태 정보 표시 */}
+      {process.env.NODE_ENV === 'development' && (() => {
         const hasKey = hasKakaoApiKey();
         const apiKey = process.env.REACT_APP_KAKAO_API_KEY;
         
@@ -165,7 +165,7 @@ export function MapView({ cats, onCatSelect }: MapViewProps) {
               <AlertCircle className={`w-6 h-6 ${hasKey ? 'text-green-600' : 'text-yellow-600'}`} />
               <div className="flex-1">
                 <h3 className={`font-bold ${hasKey ? 'text-green-700' : 'text-yellow-700'}`}>
-                  {hasKey ? '카카오맵 API 설정됨' : '카카오맵 API 키 설정 필요'}
+                  [개발용] {hasKey ? '카카오맵 API 설정됨' : '카카오맵 API 키 설정 필요'}
                 </h3>
                 
                 <div className={`text-sm mt-1 space-y-1 ${hasKey ? 'text-green-600' : 'text-yellow-600'}`}>
